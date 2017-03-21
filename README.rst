@@ -7,7 +7,7 @@ purely academic with the purpose of learning the complexities of the 3D printing
 problem via exploration in programming.
 
 The project aims to incorporate the following technologies, data structures,
-tool chains, or specifications as a focus for phase 1:
+tool chains, or specifications as a focus for phase one:
 
 * Flex and bison (for scanning and parsing text STL files)
 * Interval tree (for indexing edges on triangles)
@@ -22,10 +22,10 @@ include:
 
 * `nanoflann`_ (for KD tree)
 
-In phase 2, the focus is `parallelization`_ and optimizing the existing
+In phase two, the focus is `parallelization`_ and optimizing the existing
 implementation.
 
-In phase 3 (shooting for the stars), the focus is to achieve feature-parity with
+In phase three (shooting for the stars), the focus is to achieve feature-parity with
 `Magics`_, an industry-leading application for 3D printing.
 
 
