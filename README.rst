@@ -32,7 +32,7 @@ In phase 3 (shooting for the stars), the focus is to achieve feature-parity with
 .. _nanoflann:
    https://github.com/jlblancoc/nanoflann
 
-.. _paparallelization:
+.. _parallelization:
    https://software.intel.com/en-us/articles/choosing-the-right-threading-framework
 
 .. _Magics:
