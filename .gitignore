@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+# Intermediate files from flex and bison
+lex.yy.c

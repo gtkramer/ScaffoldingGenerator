@@ -1,0 +1,9 @@
+solid name
+	facet normal 1.1 2.2 3.3
+	    outer loop
+		vertex 1 2 4
+		vertex 0.5 1 2
+		vertex 0.25 0.5 1
+	    endloop
+	endfacet
+endsolid name
