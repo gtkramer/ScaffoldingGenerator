@@ -17,7 +17,7 @@
 solid: SOLID_START facet_list SOLID_END
 
 facet_list: facet
- | facet_list
+ | facet_list facet
  ;
 
 facet: FACET_START NORMAL FLOAT FLOAT FLOAT loop FACET_END
