@@ -13,6 +13,7 @@
     float yyval;
 %}
 
+%option noyywrap
 %option caseless
 
 %%
@@ -34,13 +35,19 @@
 %%
 
 int main(int argc, char **argv) {
-    int tok;
-    while (tok = yylex()) {
-        printf("%d", tok);
-        if (tok == FLOAT) {
-            printf(" = %f", yyval);
+    if (argc > 1 && (yyin = fopen(argv[1], "r"))) {
+        int tok;
+        while (tok = yylex()) {
+            printf("%d", tok);
+            if (tok == FLOAT) {
+                printf(" = %f", yyval);
+            }
+            printf("\n");
         }
-        printf("\n");
+        return 0;
     }
-    return 0;
+    else {
+        fprintf(stderr, "%s", argv[1]);
+        return 1;
+    }
 }
