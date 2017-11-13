@@ -1,9 +1,86 @@
-sOlId lol
-	faCeT normal 1.1 2.2 3.3
-	    OUTER loop
-		vertex 1 2 4
-		vertex 0.5 1 2
-		vertex 0.25 0.5 1
-	    ENdloop
-	endFACET
-endsoLID lol
+solid model
+facet normal 0.0 0.0 -1.0
+outer loop
+vertex 20.0 0.0 0.0
+vertex 0.0 -20.0 0.0
+vertex 0.0 0.0 0.0
+endloop
+endfacet
+facet normal 0.0 0.0 -1.0
+outer loop
+vertex 0.0 -20.0 0.0
+vertex 20.0 0.0 0.0
+vertex 20.0 -20.0 0.0
+endloop
+endfacet
+facet normal -0.0 -1.0 -0.0
+outer loop
+vertex 20.0 -20.0 20.0
+vertex 0.0 -20.0 0.0
+vertex 20.0 -20.0 0.0
+endloop
+endfacet
+facet normal -0.0 -1.0 -0.0
+outer loop
+vertex 0.0 -20.0 0.0
+vertex 20.0 -20.0 20.0
+vertex 0.0 -20.0 20.0
+endloop
+endfacet
+facet normal 1.0 0.0 0.0
+outer loop
+vertex 20.0 0.0 0.0
+vertex 20.0 -20.0 20.0
+vertex 20.0 -20.0 0.0
+endloop
+endfacet
+facet normal 1.0 0.0 0.0
+outer loop
+vertex 20.0 -20.0 20.0
+vertex 20.0 0.0 0.0
+vertex 20.0 0.0 20.0
+endloop
+endfacet
+facet normal -0.0 -0.0 1.0
+outer loop
+vertex 20.0 -20.0 20.0
+vertex 0.0 0.0 20.0
+vertex 0.0 -20.0 20.0
+endloop
+endfacet
+facet normal -0.0 -0.0 1.0
+outer loop
+vertex 0.0 0.0 20.0
+vertex 20.0 -20.0 20.0
+vertex 20.0 0.0 20.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 0.0 20.0
+vertex 0.0 -20.0 0.0
+vertex 0.0 -20.0 20.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 -20.0 0.0
+vertex 0.0 0.0 20.0
+vertex 0.0 0.0 0.0
+endloop
+endfacet
+facet normal -0.0 1.0 0.0
+outer loop
+vertex 0.0 0.0 20.0
+vertex 20.0 0.0 0.0
+vertex 0.0 0.0 0.0
+endloop
+endfacet
+facet normal -0.0 1.0 0.0
+outer loop
+vertex 20.0 0.0 0.0
+vertex 0.0 0.0 20.0
+vertex 20.0 0.0 20.0
+endloop
+endfacet
+endsolid model
