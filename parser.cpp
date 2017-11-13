@@ -29,13 +29,13 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 namespace amsg {
-    template<typename Iterator> struct StlTextParser : qi::grammar<Iterator, std::vector<amsg::Facet>(), ascii::space_type> {
+    template<typename Iterator> struct StlTextParser : qi::grammar<Iterator, std::vector<Facet>(), ascii::space_type> {
         qi::rule<Iterator, std::vector<float>(), ascii::space_type> vertex;
         qi::rule<Iterator, std::vector<std::vector<float>>(), ascii::space_type> outerLoop;
         qi::rule<Iterator, std::vector<float>(), ascii::space_type> normal;
         qi::rule<Iterator, Facet(), ascii::space_type> facet;
         qi::rule<Iterator, std::string()> name;
-        qi::rule<Iterator, std::vector<amsg::Facet>(), ascii::space_type> solid;
+        qi::rule<Iterator, std::vector<Facet>(), ascii::space_type> solid;
 
         StlTextParser() : StlTextParser::base_type(solid) {
             vertex %= ascii::no_case[qi::lit("vertex")] >> qi::float_ >> qi::float_ >> qi::float_;
@@ -46,47 +46,109 @@ namespace amsg {
             solid %= ascii::no_case[qi::lit("solid")] >> qi::omit[-name] >> +facet >> ascii::no_case[qi::lit("endsolid")] >> qi::omit[-name];
         }
     };
+
+    template<typename Iterator> struct StlBinaryParser : qi::grammar<Iterator, std::vector<Facet>()> {
+        qi::rule<Iterator, std::vector<float>()> quantity;
+        qi::rule<Iterator, std::vector<std::vector<float>>()> grouping;
+        qi::rule<Iterator, Facet()> facet;
+        qi::rule<Iterator, std::vector<Facet>()> solid;
+
+        StlBinaryParser() : StlBinaryParser::base_type(solid) {
+            quantity %= qi::little_bin_float >> qi::little_bin_float >> qi::little_bin_float;
+            grouping %= quantity >> quantity >> quantity;
+            facet %= quantity >> grouping >> qi::omit[qi::word];
+            solid %= qi::omit[qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword] >> qi::omit[qi::little_dword] >> +facet;
+        }
+    };
+}
+
+void printSolid(std::vector<amsg::Facet> facets) {
+    for (amsg::Facet facet : facets) {
+        std::cout << "FACET" << std::endl;
+        std::cout << "=====" << std::endl;
+        std::cout << "Normal: " << std::endl;
+        for (float num : facet.normal) {
+            std::cout << num << std::endl;
+        }
+        std::cout << "Vertices" << std::endl;
+        std::cout << "--------" << std::endl;
+        for (std::vector<float> vertex : facet.vertices) {
+            std::cout << "Vertex:" << std::endl;
+            for (float num : vertex) {
+                std::cout << num << std::endl;
+            }
+        }
+    }
+}
+
+void parseTextFile() {
+    std::ifstream inputFile("/home/george/Documents/Projects/C++/amsg/samples/text.stl", std::ios::in);
+    if (inputFile.is_open()) {
+        inputFile.seekg(0, std::ios::end);
+        std::streampos length = inputFile.tellg();
+        inputFile.seekg(0, std::ios::beg);
+
+        std::string buffer;
+        buffer.resize(length);
+        inputFile.read(&buffer[0], length);
+        inputFile.close();
+
+        std::string::const_iterator begin = buffer.begin();
+        std::string::const_iterator end = buffer.end();
+        amsg::StlTextParser<std::string::const_iterator> grammar;
+        std::vector<amsg::Facet> facets;
+        bool result = qi::phrase_parse(begin, end, grammar, ascii::space, facets);
+        if (result && begin == end) {
+            std::cout << "Parsing SUCCEEDED!" << std::endl;
+            printSolid(facets);
+        }
+        else {
+            std::cout << "Parsing FAILED!" << std::endl;
+            int iterCounts = 0;
+            while (begin != end) {
+                begin++;
+                iterCounts++;
+            }
+            std::cout << "Number of iterations left on buffer: " << iterCounts << std::endl;
+        }
+        std::cout << "Number of facets parsed: " << facets.size() << std::endl;
+    }
+}
+
+void parseBinaryFile() {
+    std::ifstream inputFile("/home/george/Documents/Projects/C++/amsg/samples/binary.stl", std::ios::in | std::ios::binary);
+    if (inputFile.is_open()) {
+        inputFile.seekg(0, std::ios::end);
+        std::streampos length = inputFile.tellg();
+        inputFile.seekg(0, std::ios::beg);
+
+        std::vector<char> buffer(length);
+        inputFile.read(&buffer[0], length);
+        inputFile.close();
+
+        std::vector<char>::const_iterator begin = buffer.begin();
+        std::vector<char>::const_iterator end = buffer.end();
+        amsg::StlBinaryParser<std::vector<char>::const_iterator> grammar;
+        std::vector<amsg::Facet> facets;
+        bool result = qi::parse(begin, end, grammar, facets);
+        if (result && begin == end) {
+            std::cout << "Parsing SUCCEEDED!" << std::endl;
+            printSolid(facets);
+        }
+        else {
+            std::cout << "Parsing FAILED!" << std::endl;
+            int iterCounts = 0;
+            while (begin != end) {
+                begin++;
+                iterCounts++;
+            }
+            std::cout << "Number of iterations left on buffer: " << iterCounts << std::endl;
+        }
+        std::cout << "Number of facets parsed: " << facets.size() << std::endl;
+    }
 }
 
 int main() {
-    std::string fileText;
-    std::ifstream inputFile("/home/george/Documents/Projects/C++/amsg/samples/text.stl", std::ios::in);
-    if (inputFile.is_open()) {
-        std::stringstream sstr;
-        sstr << inputFile.rdbuf();
-        inputFile.close();
-        fileText = sstr.str();
-    }
-    std::cout << fileText << std::endl;
-
-    std::string::const_iterator start = fileText.begin();
-    std::string::const_iterator end = fileText.end();
-    amsg::StlTextParser<std::string::const_iterator> grammar;
-    std::vector<amsg::Facet> facets;
-    bool result = qi::phrase_parse(start, end, grammar, ascii::space, facets);
-    if (result && start == end) {
-        std::cout << "Parsing SUCCEEDED!" << std::endl;
-        for (amsg::Facet facet : facets) {
-            std::cout << "FACET" << std::endl;
-            std::cout << "=====" << std::endl;
-            std::cout << "Normal: " << std::endl;
-            for (float num : facet.normal) {
-                std::cout << num << std::endl;
-            }
-            std::cout << "Vertices" << std::endl;
-            std::cout << "--------" << std::endl;
-            for (std::vector<float> vertex : facet.vertices) {
-                std::cout << "Vertex:" << std::endl;
-                for (float num : vertex) {
-                    std::cout << num << std::endl;
-                }
-            }
-        }
-        return 0;
-    }
-    else {
-        std::cerr << "Parsing FAILED!" << std::endl;
-        std::cerr << "Parsing stopped here: " << *start << std::endl;
-        return 1;
-    }
+    parseBinaryFile();
+    return 0;
 }
