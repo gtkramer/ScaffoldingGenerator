@@ -57,7 +57,7 @@ namespace amsg {
             quantity %= qi::little_bin_float >> qi::little_bin_float >> qi::little_bin_float;
             grouping %= quantity >> quantity >> quantity;
             facet %= quantity >> grouping >> qi::omit[qi::word];
-            solid %= qi::omit[qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword >> qi::qword] >> qi::omit[qi::little_dword] >> +facet;
+            solid %= qi::omit[qi::repeat(10)[qi::qword] >> qi::dword] >> +facet;
         }
     };
 }
