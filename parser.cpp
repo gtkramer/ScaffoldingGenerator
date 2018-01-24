@@ -38,9 +38,9 @@ namespace amsg {
         qi::rule<Iterator, std::vector<Facet>(), ascii::space_type> solid;
 
         StlTextParser() : StlTextParser::base_type(solid) {
-            vertex %= ascii::no_case[qi::lit("vertex")] >> qi::float_ >> qi::float_ >> qi::float_;
-            outerLoop %= ascii::no_case[qi::lit("outer loop")] >> vertex >> vertex >> vertex >> ascii::no_case[qi::lit("endloop")];
-            normal %= ascii::no_case[qi::lit("normal")] >> qi::float_ >> qi::float_ >> qi::float_;
+            vertex %= ascii::no_case[qi::lit("vertex")] >> qi::repeat(3)[qi::float_];
+            outerLoop %= ascii::no_case[qi::lit("outer loop")] >> qi::repeat(3)[vertex] >> ascii::no_case[qi::lit("endloop")];
+            normal %= ascii::no_case[qi::lit("normal")] >> qi::repeat(3)[qi::float_];
             facet %= ascii::no_case[qi::lit("facet")] >> normal >> outerLoop >> ascii::no_case[qi::lit("endfacet")];
             name %= +ascii::char_("a-zA-Z_0-9");
             solid %= ascii::no_case[qi::lit("solid")] >> qi::omit[-name] >> +facet >> ascii::no_case[qi::lit("endsolid")] >> qi::omit[-name];
@@ -54,8 +54,8 @@ namespace amsg {
         qi::rule<Iterator, std::vector<Facet>()> solid;
 
         StlBinaryParser() : StlBinaryParser::base_type(solid) {
-            quantity %= qi::little_bin_float >> qi::little_bin_float >> qi::little_bin_float;
-            grouping %= quantity >> quantity >> quantity;
+            quantity %= qi::repeat(3)[qi::little_bin_float];
+            grouping %= qi::repeat(3)[quantity];
             facet %= quantity >> grouping >> qi::omit[qi::word];
             solid %= qi::omit[qi::repeat(10)[qi::qword] >> qi::dword] >> +facet;
         }
@@ -151,6 +151,7 @@ void parseBinaryFile() {
 }
 
 int main() {
-    parseBinaryFile();
+    //parseBinaryFile();
+    parseTextFile();
     return 0;
 }
