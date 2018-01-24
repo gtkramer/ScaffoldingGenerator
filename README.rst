@@ -14,7 +14,16 @@ tool chains, or specifications as a focus for phase one:
 * OpenGL 4.5 (for rendering an object)
 * Simple DirectMedia Layer 2.0 (for interacting with a render)
 * Boost (for linear algebra calculations between planes and a model, scanning and parsing text STL files, and a general-purpose library)
-* Autotools (for compiling)
+* Meson (for compiling)
+* Google Test (for unit testing)
+* GTK+ and Glade (for user interface)
+
+Motivation for implementation choices:
+
+* Use modern build and test systems
+* Rely on prominent third-party libraries when appropriate
+* Program graphics at an appropriate level of abstraction
+* Separate user interface from logic using native tooklit of desktop environment of personal choice
 
 Specific implementations of data structures need evaluated.  Possible candiates
 include:
