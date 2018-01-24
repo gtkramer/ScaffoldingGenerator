@@ -43,7 +43,7 @@ namespace amsg {
             normal %= ascii::no_case[qi::lit("normal")] >> qi::repeat(3)[qi::float_];
             facet %= ascii::no_case[qi::lit("facet")] >> normal >> outerLoop >> ascii::no_case[qi::lit("endfacet")];
             name %= +ascii::char_("a-zA-Z_0-9");
-            solid %= ascii::no_case[qi::lit("solid")] >> qi::omit[-name] >> +facet >> ascii::no_case[qi::lit("endsolid")] >> qi::omit[-name];
+            solid %= ascii::no_case[qi::lit("solid")] >> qi::omit[name] >> +facet >> ascii::no_case[qi::lit("endsolid")] >> qi::omit[name] | ascii::no_case[qi::lit("solid")] >> +facet >> ascii::no_case[qi::lit("endsolid")];
         }
     };
 
