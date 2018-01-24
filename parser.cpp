@@ -85,8 +85,9 @@ void parseTextFile() {
     std::ifstream inputFile("/home/george/Documents/Projects/C++/amsg/samples/text.stl", std::ios::in);
     if (inputFile.is_open()) {
         inputFile.seekg(0, std::ios::end);
-        std::streampos length = inputFile.tellg();
+        int length = inputFile.tellg();
         inputFile.seekg(0, std::ios::beg);
+        std::cout << "Length of file: " << length << std::endl;
 
         std::string buffer;
         buffer.resize(length);
@@ -119,8 +120,9 @@ void parseBinaryFile() {
     std::ifstream inputFile("/home/george/Documents/Projects/C++/amsg/samples/binary.stl", std::ios::in | std::ios::binary);
     if (inputFile.is_open()) {
         inputFile.seekg(0, std::ios::end);
-        std::streampos length = inputFile.tellg();
+        int length = inputFile.tellg();
         inputFile.seekg(0, std::ios::beg);
+        std::cout << "Length of file: " << length << std::endl;
 
         std::vector<char> buffer(length);
         inputFile.read(&buffer[0], length);
