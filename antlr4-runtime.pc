@@ -1,0 +1,9 @@
+prefix=/usr
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: antlr4-runtime
+Description: Antlr C++ runtime
+Version: 4.7.2
+Libs: -lantlr4-runtime
+Cflags: -I${includedir}/antlr4-runtime
