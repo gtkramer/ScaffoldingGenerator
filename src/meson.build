@@ -1,7 +1,7 @@
 antlr4_bin = find_program('antlr4')
 parser_target = custom_target('parser',
   input : ['StlAscii.g4'],
-  output : ['StlAsciiBaseListener.cpp', 'StlAsciiBaseListener.h', 'StlAsciiLexer.cpp', 'StlAsciiLexer.h', 'StlAsciiListener.cpp', 'StlAsciiListener.h', 'StlAsciiParser.cpp', 'StlAsciiParser.h'],
+  output : ['StlAsciiLexer.cpp', 'StlAsciiLexer.h', 'StlAsciiParser.cpp', 'StlAsciiParser.h'],
   command : [antlr4_bin, '-o', '@OUTDIR@', '-Dlanguage=Cpp', '@INPUT@']
 )
 
