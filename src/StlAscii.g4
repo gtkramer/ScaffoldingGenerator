@@ -12,13 +12,9 @@ NAME : [a-zA-Z0-9\-_]+ ;
 FLOAT : ([0-9]+ '.' [0-9]+) ;
 WHITESPACE : ('\r'? '\n' | '\t' | ' ')+ -> skip ;
 
-expression
-	: solid EOF
-	;
-
 solid
-	: SOLID_BEGIN NAME facet+ SOLID_END NAME
-	| SOLID_BEGIN facet+ SOLID_END
+	: SOLID_BEGIN NAME facet+ SOLID_END NAME EOF
+	| SOLID_BEGIN facet+ SOLID_END EOF
 	;
 
 facet
