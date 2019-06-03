@@ -30,3 +30,6 @@
 
 # Editor files
 .vscode
+
+# Build files
+*build*
