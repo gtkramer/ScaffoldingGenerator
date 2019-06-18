@@ -9,7 +9,7 @@ LOOP_END : 'endloop' ;
 NORMAL : 'normal' ;
 VERTEX : 'vertex' ;
 NAME : [a-zA-Z0-9\-_]+ ;
-FLOAT : ([0-9]+ '.' [0-9]+) ;
+FLOAT : ([-+]?[0-9]* '.'? [0-9]+) ;
 WHITESPACE : ('\r'? '\n' | '\t' | ' ' | '\f')+ -> skip ;
 
 solid
