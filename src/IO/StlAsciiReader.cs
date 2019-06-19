@@ -2,40 +2,53 @@ using System.IO;
 using AdditiveManufacturing.IO;
 using AdditiveManufacturing.Mathematics;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using MathNet.Spatial.Euclidean;
+using System.Linq;
 
 public class StlAsciiReader : StlReader {
-	private class StlAsciiVisitor : StlAsciiBaseVisitor<Facet[]> {
-		public override Facet[] VisitSolid(StlAsciiParser.SolidContext solidContext) {
-			StlAsciiParser.FacetContext[] facetContexts = solidContext.facet();
-			Facet[] facets = new Facet[facetContexts.Length];
-			for (int i = 0; i != facetContexts.Length; i++) {
-				ITerminalNode[] normalFloats = facetContexts[i].normal().FLOAT();
-				Vector3D normal = new Vector3D(float.Parse(normalFloats[0].GetText()), float.Parse(normalFloats[1].GetText()), float.Parse(normalFloats[2].GetText()));
+	private class SolidVisitor : StlAsciiBaseVisitor<Facet[]> {
+		public override Facet[] VisitSolid(StlAsciiParser.SolidContext context) {
+			FacetVisitor facetVisitor = new FacetVisitor();
+			return context.facet().Select((x) => facetVisitor.VisitFacet(x)).ToArray();
+		}
+	}
 
-				StlAsciiParser.VertexContext[] vertexContexts = facetContexts[i].loop().vertex();
-				Point3D[] vertices = new Point3D[vertexContexts.Length];
-				for (int j = 0; j != vertexContexts.Length; j++) {
-					ITerminalNode[] vertexFloats = vertexContexts[j].FLOAT();
-					vertices[j] = new Point3D(float.Parse(vertexFloats[0].GetText()), float.Parse(vertexFloats[1].GetText()), float.Parse(vertexFloats[2].GetText()));
-				}
+	private class FacetVisitor : StlAsciiBaseVisitor<Facet> {
+		public override Facet VisitFacet(StlAsciiParser.FacetContext context) {
+			NormalVisitor normalVisitor = new NormalVisitor();
+			LoopVisitor loopVisitor = new LoopVisitor();
+			return new Facet(normalVisitor.VisitNormal(context.normal()), loopVisitor.VisitLoop(context.loop()));
+		}
+	}
 
-				facets[i] = new Facet(normal, vertices);
-			}
-			return facets;
+	private class NormalVisitor : StlAsciiBaseVisitor<Vector3D> {
+		public override Vector3D VisitNormal(StlAsciiParser.NormalContext context) {
+			float[] floats = context.FLOAT().Select((x) => float.Parse(x.GetText())).ToArray();
+			return new Vector3D(floats[0], floats[1], floats[2]);
+		}
+	}
+
+	private class LoopVisitor : StlAsciiBaseVisitor<Point3D[]> {
+		public override Point3D[] VisitLoop(StlAsciiParser.LoopContext context) {
+			VertexVisitor vertexVisitor = new VertexVisitor();
+			return context.vertex().Select((x) => vertexVisitor.VisitVertex(x)).ToArray();
+		}
+	}
+
+	private class VertexVisitor : StlAsciiBaseVisitor<Point3D> {
+		public override Point3D VisitVertex(StlAsciiParser.VertexContext context) {
+			float[] floats = context.FLOAT().Select((x) => float.Parse(x.GetText())).ToArray();
+			return new Point3D(floats[0], floats[1], floats[2]);
 		}
 	}
 
 	public override Facet[] Read(string filePath) {
-		Facet[] facets;
 		string fileContents = File.ReadAllText(filePath);
 		AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
 		StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		StlAsciiParser parser = new StlAsciiParser(tokenStream);
-		StlAsciiVisitor visitor = new StlAsciiVisitor();
-		facets = visitor.Visit(parser.solid());
-		return facets;
+		SolidVisitor visitor = new SolidVisitor();
+		return visitor.Visit(parser.solid());
 	}
 }
