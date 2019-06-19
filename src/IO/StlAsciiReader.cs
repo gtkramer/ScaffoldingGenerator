@@ -29,14 +29,13 @@ public class StlAsciiReader : StlReader {
 
 	public override Facet[] Read(string filePath) {
 		Facet[] facets;
-		using (FileStream fileStream = File.OpenRead(filePath)) {
-			AntlrInputStream inputStream = new AntlrInputStream(fileStream);
-			StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
-			CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-			StlAsciiParser parser = new StlAsciiParser(tokenStream);
-			StlAsciiVisitor visitor = new StlAsciiVisitor();
-			facets = visitor.Visit(parser.solid());
-		}
+		string fileContents = File.ReadAllText(filePath);
+		AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
+		StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
+		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+		StlAsciiParser parser = new StlAsciiParser(tokenStream);
+		StlAsciiVisitor visitor = new StlAsciiVisitor();
+		facets = visitor.Visit(parser.solid());
 		return facets;
 	}
 }
