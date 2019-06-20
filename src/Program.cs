@@ -37,7 +37,7 @@ namespace AdditiveManufacturing {
 		}
 
 		private static void RunOptions(Options opts) {
-			StlReader reader = new StlAsciiReader();
+			StlReader reader = new StlBinaryReader();
 			Facet[] facets = reader.Read(opts.StlFilePath);
 			Console.WriteLine("Parsed " + facets.Length + " facets");
 		}
