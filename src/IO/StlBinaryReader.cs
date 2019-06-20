@@ -5,13 +5,10 @@ using MathNet.Spatial.Euclidean;
 namespace AdditiveManufacturing.IO {
 	public class StlBinaryReader : StlReader {
 		public override Facet[] Read(string filePath) {
+			int facetCount = GetFacetCount(filePath);
 			using (FileStream stream = File.OpenRead(filePath))
 			using (BinaryReader reader = new BinaryReader(stream)) {
-				reader.ReadBytes(80);
-				int facetCount = reader.ReadInt32();
-				if (facetCount <= 0) {
-					throw new IOException("Expected facet definitions");
-				}
+				reader.ReadBytes(84);
 				Facet[] facets = new Facet[facetCount];
 				for (int currFacet = 0; currFacet != facetCount; currFacet++) {
 					Vector3D normal = new Vector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -24,6 +21,19 @@ namespace AdditiveManufacturing.IO {
 				}
 				return facets;
 			}
+		}
+
+		private int GetFacetCount(string filePath) {
+			FileInfo fileInfo = new FileInfo(filePath);
+			long fileLength = fileInfo.Length;
+			if ((fileLength - 84) % 50 != 0) {
+				throw new IOException("Corrupt file");
+			}
+			int facetCount = (int)((fileLength - 84) / 50);
+			if (facetCount <= 0) {
+				throw new IOException("No facets exist");
+			}
+			return facetCount;
 		}
 	}
 }
