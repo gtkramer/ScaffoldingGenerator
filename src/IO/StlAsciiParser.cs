@@ -36,8 +36,8 @@ public partial class StlAsciiParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		SOLID_BEGIN=1, SOLID_END=2, FACET_BEGIN=3, FACET_END=4, LOOP_BEGIN=5, 
-		LOOP_END=6, NORMAL=7, VERTEX=8, NAME=9, FLOAT=10, WHITESPACE=11;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, NAME=9, 
+		FLOAT=10, WHITESPACE=11;
 	public const int
 		RULE_solid = 0, RULE_facet = 1, RULE_normal = 2, RULE_loop = 3, RULE_vertex = 4;
 	public static readonly string[] ruleNames = {
@@ -45,12 +45,12 @@ public partial class StlAsciiParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'solid'", "'endsolid'", "'facet'", "'endfacet'", "'outer loop'", 
-		"'endloop'", "'normal'", "'vertex'"
+		null, "'solid'", "'endsolid'", "'facet'", "'endfacet'", "'normal'", "'outer loop'", 
+		"'endloop'", "'vertex'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "SOLID_BEGIN", "SOLID_END", "FACET_BEGIN", "FACET_END", "LOOP_BEGIN", 
-		"LOOP_END", "NORMAL", "VERTEX", "NAME", "FLOAT", "WHITESPACE"
+		null, null, null, null, null, null, null, null, null, "NAME", "FLOAT", 
+		"WHITESPACE"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -85,12 +85,10 @@ public partial class StlAsciiParser : Parser {
 	}
 
 	public partial class SolidContext : ParserRuleContext {
-		public ITerminalNode SOLID_BEGIN() { return GetToken(StlAsciiParser.SOLID_BEGIN, 0); }
 		public ITerminalNode[] NAME() { return GetTokens(StlAsciiParser.NAME); }
 		public ITerminalNode NAME(int i) {
 			return GetToken(StlAsciiParser.NAME, i);
 		}
-		public ITerminalNode SOLID_END() { return GetToken(StlAsciiParser.SOLID_END, 0); }
 		public ITerminalNode Eof() { return GetToken(StlAsciiParser.Eof, 0); }
 		public FacetContext[] facet() {
 			return GetRuleContexts<FacetContext>();
@@ -122,7 +120,7 @@ public partial class StlAsciiParser : Parser {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 10; Match(SOLID_BEGIN);
+				State = 10; Match(T__0);
 				State = 11; Match(NAME);
 				State = 13;
 				ErrorHandler.Sync(this);
@@ -136,8 +134,8 @@ public partial class StlAsciiParser : Parser {
 					State = 15;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-				} while ( _la==FACET_BEGIN );
-				State = 17; Match(SOLID_END);
+				} while ( _la==T__2 );
+				State = 17; Match(T__1);
 				State = 18; Match(NAME);
 				State = 19; Match(Eof);
 				}
@@ -145,7 +143,7 @@ public partial class StlAsciiParser : Parser {
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 21; Match(SOLID_BEGIN);
+				State = 21; Match(T__0);
 				State = 23;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
@@ -158,8 +156,8 @@ public partial class StlAsciiParser : Parser {
 					State = 25;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-				} while ( _la==FACET_BEGIN );
-				State = 27; Match(SOLID_END);
+				} while ( _la==T__2 );
+				State = 27; Match(T__1);
 				State = 28; Match(Eof);
 				}
 				break;
@@ -177,14 +175,12 @@ public partial class StlAsciiParser : Parser {
 	}
 
 	public partial class FacetContext : ParserRuleContext {
-		public ITerminalNode FACET_BEGIN() { return GetToken(StlAsciiParser.FACET_BEGIN, 0); }
 		public NormalContext normal() {
 			return GetRuleContext<NormalContext>(0);
 		}
 		public LoopContext loop() {
 			return GetRuleContext<LoopContext>(0);
 		}
-		public ITerminalNode FACET_END() { return GetToken(StlAsciiParser.FACET_END, 0); }
 		public FacetContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -204,10 +200,10 @@ public partial class StlAsciiParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 32; Match(FACET_BEGIN);
+			State = 32; Match(T__2);
 			State = 33; normal();
 			State = 34; loop();
-			State = 35; Match(FACET_END);
+			State = 35; Match(T__3);
 			}
 		}
 		catch (RecognitionException re) {
@@ -222,7 +218,6 @@ public partial class StlAsciiParser : Parser {
 	}
 
 	public partial class NormalContext : ParserRuleContext {
-		public ITerminalNode NORMAL() { return GetToken(StlAsciiParser.NORMAL, 0); }
 		public ITerminalNode[] FLOAT() { return GetTokens(StlAsciiParser.FLOAT); }
 		public ITerminalNode FLOAT(int i) {
 			return GetToken(StlAsciiParser.FLOAT, i);
@@ -246,7 +241,7 @@ public partial class StlAsciiParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 37; Match(NORMAL);
+			State = 37; Match(T__4);
 			State = 38; Match(FLOAT);
 			State = 39; Match(FLOAT);
 			State = 40; Match(FLOAT);
@@ -264,14 +259,12 @@ public partial class StlAsciiParser : Parser {
 	}
 
 	public partial class LoopContext : ParserRuleContext {
-		public ITerminalNode LOOP_BEGIN() { return GetToken(StlAsciiParser.LOOP_BEGIN, 0); }
 		public VertexContext[] vertex() {
 			return GetRuleContexts<VertexContext>();
 		}
 		public VertexContext vertex(int i) {
 			return GetRuleContext<VertexContext>(i);
 		}
-		public ITerminalNode LOOP_END() { return GetToken(StlAsciiParser.LOOP_END, 0); }
 		public LoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -291,11 +284,11 @@ public partial class StlAsciiParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 42; Match(LOOP_BEGIN);
+			State = 42; Match(T__5);
 			State = 43; vertex();
 			State = 44; vertex();
 			State = 45; vertex();
-			State = 46; Match(LOOP_END);
+			State = 46; Match(T__6);
 			}
 		}
 		catch (RecognitionException re) {
@@ -310,7 +303,6 @@ public partial class StlAsciiParser : Parser {
 	}
 
 	public partial class VertexContext : ParserRuleContext {
-		public ITerminalNode VERTEX() { return GetToken(StlAsciiParser.VERTEX, 0); }
 		public ITerminalNode[] FLOAT() { return GetTokens(StlAsciiParser.FLOAT); }
 		public ITerminalNode FLOAT(int i) {
 			return GetToken(StlAsciiParser.FLOAT, i);
@@ -334,7 +326,7 @@ public partial class StlAsciiParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 48; Match(VERTEX);
+			State = 48; Match(T__7);
 			State = 49; Match(FLOAT);
 			State = 50; Match(FLOAT);
 			State = 51; Match(FLOAT);
@@ -385,12 +377,12 @@ public partial class StlAsciiParser : Parser {
 		'\x3', '\x2', '\x2', '\x2', '!', '\x3', '\x3', '\x2', '\x2', '\x2', '\"', 
 		'#', '\a', '\x5', '\x2', '\x2', '#', '$', '\x5', '\x6', '\x4', '\x2', 
 		'$', '%', '\x5', '\b', '\x5', '\x2', '%', '&', '\a', '\x6', '\x2', '\x2', 
-		'&', '\x5', '\x3', '\x2', '\x2', '\x2', '\'', '(', '\a', '\t', '\x2', 
+		'&', '\x5', '\x3', '\x2', '\x2', '\x2', '\'', '(', '\a', '\a', '\x2', 
 		'\x2', '(', ')', '\a', '\f', '\x2', '\x2', ')', '*', '\a', '\f', '\x2', 
 		'\x2', '*', '+', '\a', '\f', '\x2', '\x2', '+', '\a', '\x3', '\x2', '\x2', 
-		'\x2', ',', '-', '\a', '\a', '\x2', '\x2', '-', '.', '\x5', '\n', '\x6', 
+		'\x2', ',', '-', '\a', '\b', '\x2', '\x2', '-', '.', '\x5', '\n', '\x6', 
 		'\x2', '.', '/', '\x5', '\n', '\x6', '\x2', '/', '\x30', '\x5', '\n', 
-		'\x6', '\x2', '\x30', '\x31', '\a', '\b', '\x2', '\x2', '\x31', '\t', 
+		'\x6', '\x2', '\x30', '\x31', '\a', '\t', '\x2', '\x2', '\x31', '\t', 
 		'\x3', '\x2', '\x2', '\x2', '\x32', '\x33', '\a', '\n', '\x2', '\x2', 
 		'\x33', '\x34', '\a', '\f', '\x2', '\x2', '\x34', '\x35', '\a', '\f', 
 		'\x2', '\x2', '\x35', '\x36', '\a', '\f', '\x2', '\x2', '\x36', '\v', 
