@@ -1,4 +1,5 @@
 ﻿using MathNet.Spatial.Euclidean;
+using System.Linq;
 
 namespace AdditiveManufacturing.Mathematics {
 	public class Facet {
@@ -43,6 +44,12 @@ namespace AdditiveManufacturing.Mathematics {
 			}
 			MinPoint = new Point3D(minX, minY, minZ);
 			MaxPoint = new Point3D(maxX, maxY, maxZ);
+		}
+
+		public override string ToString() {
+			string output = "Normal\n" + Normal.ToString() + "\nVertices:\n";
+			output += string.Join("\n", Vertices.Select((x) => x.ToString()));
+			return output;
 		}
 	}
 }
