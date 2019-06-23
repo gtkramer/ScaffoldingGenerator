@@ -8,6 +8,8 @@ namespace AdditiveManufacturing {
 		public class Options {
 			[Option("stl-file", Required = true, HelpText = "Input STL file")]
 			public string StlFilePath { get; set; }
+			[Option("ascii", Required = false, Default = false, HelpText = "Work with STL files in ASCII, otherwise, assume binary if absent")]
+			public bool IsStlAscii { get; set; }
 
 			[Option("critical-angle", Required = false, Default = 45, HelpText = "Critical angle for supporting facets")]
 			public float CriticalAngle { get; set; }
@@ -37,9 +39,24 @@ namespace AdditiveManufacturing {
 		}
 
 		private static void RunOptions(Options opts) {
-			StlReader reader = new StlBinaryReader();
-			Facet[] facets = reader.Read(opts.StlFilePath);
-			Console.WriteLine("Parsed " + facets.Length + " facets");
+			try {
+				StlReader reader;
+				if (opts.IsStlAscii) {
+					reader = new StlAsciiReader();
+				}
+				else {
+					reader = new StlBinaryReader();
+				}
+				Facet[] facets = reader.Read(opts.StlFilePath);
+				Console.WriteLine("Parsed " + facets.Length + " facets");
+				foreach (Facet facet in facets) {
+					Console.WriteLine(facet);
+				}
+			}
+			catch (Exception ex) {
+				Console.Error.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
 		}
 	}
 }

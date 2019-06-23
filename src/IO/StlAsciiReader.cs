@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using AdditiveManufacturing.IO;
 using AdditiveManufacturing.Mathematics;
@@ -49,6 +50,10 @@ public class StlAsciiReader : StlReader {
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		StlAsciiParser parser = new StlAsciiParser(tokenStream);
 		SolidVisitor visitor = new SolidVisitor();
-		return visitor.Visit(parser.solid());
+		Facet[] facets = visitor.Visit(parser.solid());
+		if (parser.NumberOfSyntaxErrors != 0) {
+			throw new Exception("Corrupt file");
+		}
+		return facets;
 	}
 }
