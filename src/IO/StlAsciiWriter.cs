@@ -1,15 +1,20 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using AdditiveManufacturing.Mathematics;
 using MathNet.Spatial.Euclidean;
 
 namespace AdditiveManufacturing.IO {
 	public class StlAsciiWriter : StlWriter {
 		public override void Write(string filePath, Facet[] facets) {
-			using (StreamWriter writer = new StreamWriter(File.OpenWrite(filePath))) {
-				if (facets.Length == 0) {
-					throw new IOException("Expected facet definitions");
-				}
+			if (facets.Length == 0) {
+					throw new Exception("Expected facet definitions");
+			}
 
+			if (File.Exists(filePath)) {
+				File.Delete(filePath);
+			}
+			using (FileStream stream = File.OpenWrite(filePath))
+			using (StreamWriter writer = new StreamWriter(stream)) {
 				string name = "object";
 				writer.Write("solid " + name + "\n");
 				foreach (Facet facet in facets) {
