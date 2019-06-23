@@ -7,6 +7,20 @@ using MathNet.Spatial.Euclidean;
 using System.Linq;
 
 public class StlAsciiReader : StlReader {
+	public override Facet[] Read(string filePath) {
+		string fileContents = File.ReadAllText(filePath);
+		AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
+		StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
+		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+		StlAsciiParser parser = new StlAsciiParser(tokenStream);
+		SolidVisitor visitor = new SolidVisitor();
+		Facet[] facets = visitor.Visit(parser.solid());
+		if (parser.NumberOfSyntaxErrors != 0) {
+			throw new Exception("Corrupt file");
+		}
+		return facets;
+	}
+
 	private class SolidVisitor : StlAsciiBaseVisitor<Facet[]> {
 		public override Facet[] VisitSolid(StlAsciiParser.SolidContext context) {
 			FacetVisitor facetVisitor = new FacetVisitor();
@@ -41,19 +55,5 @@ public class StlAsciiReader : StlReader {
 			float[] floats = context.FLOAT().Select((x) => float.Parse(x.GetText())).ToArray();
 			return new Point3D(floats[0], floats[1], floats[2]);
 		}
-	}
-
-	public override Facet[] Read(string filePath) {
-		string fileContents = File.ReadAllText(filePath);
-		AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
-		StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
-		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-		StlAsciiParser parser = new StlAsciiParser(tokenStream);
-		SolidVisitor visitor = new SolidVisitor();
-		Facet[] facets = visitor.Visit(parser.solid());
-		if (parser.NumberOfSyntaxErrors != 0) {
-			throw new Exception("Corrupt file");
-		}
-		return facets;
 	}
 }

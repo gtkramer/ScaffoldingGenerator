@@ -5,6 +5,12 @@ using AdditiveManufacturing.Mathematics;
 
 namespace AdditiveManufacturing {
 	public class Program {
+		public static void Main(string[] args) {
+			Parser.Default.ParseArguments<Options>(args)
+			.WithParsed<Options>(RunOptions);
+			//.WithNotParsed<Options>(HandleParseError);
+		}
+
 		public class Options {
 			[Option("stl-file", Required = true, HelpText = "Input STL file")]
 			public string StlFilePath { get; set; }
@@ -30,12 +36,6 @@ namespace AdditiveManufacturing {
 			public bool DoYScaffolding { get; set; }
 			[Option("contour-scaffolding", Required = false, Default = false, HelpText = "Generate contour scaffolding")]
 			public bool DoContourScaffolding { get; set; }
-		}
-
-		public static void Main(string[] args) {
-			Parser.Default.ParseArguments<Options>(args)
-			.WithParsed<Options>(RunOptions);
-			//.WithNotParsed<Options>(HandleParseError);
 		}
 
 		private static void RunOptions(Options opts) {
