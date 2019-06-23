@@ -2,5 +2,4 @@ bin
 obj
 *.tokens
 *.interp
-.vscode
 .antlr

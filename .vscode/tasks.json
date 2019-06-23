@@ -7,11 +7,11 @@
             "type":"shell",
             "args": [
                 "-o",
-                "${workspaceFolder}/src/IO",
+                "${workspaceFolder}/src/ConsoleApplication/IO",
                 "-Dlanguage=CSharp",
                 "-visitor",
                 "-no-listener",
-                "${workspaceFolder}/src/IO/*.g4"
+                "${workspaceFolder}/src/ConsoleApplication/IO/*.g4"
             ],
             "problemMatcher": "$tsc"
         },
@@ -21,7 +21,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/amsg.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -31,7 +31,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/amsg.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -42,7 +42,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/amsg.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
             ],
             "problemMatcher": "$tsc"
         }
