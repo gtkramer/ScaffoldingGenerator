@@ -8,6 +8,7 @@ namespace AdditiveManufacturing.Mathematics {
 		public Line3D[] Edges;
 		public Point3D MinPoint;
 		public Point3D MaxPoint;
+		public bool Visited;
 
 		public Facet(Vector3D normal, Point3D[] vertices) {
 			Normal = normal;
@@ -44,6 +45,7 @@ namespace AdditiveManufacturing.Mathematics {
 			}
 			MinPoint = new Point3D(minX, minY, minZ);
 			MaxPoint = new Point3D(maxX, maxY, maxZ);
+			Visited = false;
 		}
 
 		public override string ToString() {
@@ -51,5 +53,17 @@ namespace AdditiveManufacturing.Mathematics {
 			output += string.Join("\n", Vertices.Select((x) => x.ToString()));
 			return output;
 		}
+
+		/*public override int GetHashCode() {
+			double sumX = 0;
+			double sumY = 0;
+			double sumZ = 0;
+			foreach (Point3D vertex in Vertices) {
+				sumX += vertex.X;
+				sumY += vertex.Y;
+				sumZ += vertex.Z;
+			}
+			return new Point3D(sumX / Vertices.Length, sumY / Vertices.Length, sumZ / Vertices.Length).GetHashCode();
+		}*/
 	}
 }
