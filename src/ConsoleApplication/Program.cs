@@ -49,8 +49,14 @@ namespace AdditiveManufacturing {
 		}*/
 
 		private static void RunOptions(Options opts) {
-			Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
-			List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(facets, opts.CriticalAngle);
+			try {
+				Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
+				List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(facets, opts.CriticalAngle);
+			}
+			catch (Exception ex) {
+				Console.Error.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
 		}
 
 		/// <summary>
