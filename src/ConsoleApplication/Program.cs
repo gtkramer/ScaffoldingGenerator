@@ -23,17 +23,17 @@ namespace AdditiveManufacturing {
 			public bool IsStlAscii { get; set; }
 
 			[Option("critical-angle", Required = false, Default = 45, HelpText = "Critical angle for supporting facets")]
-			public float CriticalAngle { get; set; }
-			//[Option("dimension-length", Required = false, Default = 0.25, HelpText = "Dimension of minimum area needing supported")]
-			//public float DimensionLength { get; set; }
+			public double CriticalAngle { get; set; }
+			[Option("dimension-length", Required = false, Default = 0.25, HelpText = "Dimension of minimum area needing supported")]
+			public double DimensionLength { get; set; }
 			[Option("tolerance-angle", Required = false, Default = 10, HelpText = "Used for calculating area")]
-			public float ToleranceAngle { get; set; }
+			public double ToleranceAngle { get; set; }
 			[Option("scaffolding-angle", Required = false, Default = 0, HelpText = "Angle at which to place line supports")]
-			public float ScaffoldingAngle { get; set; }
-			//[Option("support-spacing", Required = false, Default = 0.125, HelpText = "Spacing between line supports")]
-			//public float SupportSpacing { get; set; }
-			//[Option("plate-spacing", Required = false, Default = 0.5, HelpText = "Spacing above build plate")]
-			//public float PlateSpacing { get; set; }
+			public double ScaffoldingAngle { get; set; }
+			[Option("support-spacing", Required = false, Default = 0.125, HelpText = "Spacing between line supports")]
+			public double SupportSpacing { get; set; }
+			[Option("plate-spacing", Required = false, Default = 0.5, HelpText = "Spacing above build plate")]
+			public double PlateSpacing { get; set; }
 
 			[Option("x-scaffolding", Required = false, Default = true, HelpText = "Generate X scaffolding")]
 			public bool DoXScaffolding { get; set; }
