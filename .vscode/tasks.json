@@ -4,7 +4,7 @@
         {
             "label": "antlr",
             "command": "antlr4",
-            "type":"shell",
+            "type": "shell",
             "args": [
                 "-o",
                 "${workspaceFolder}/src/ConsoleApplication/IO",
@@ -21,9 +21,11 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$tsc"
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "publish",
@@ -31,9 +33,11 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$tsc"
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "watch",
@@ -42,9 +46,11 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj"
+                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$tsc"
+            "problemMatcher": "$msCompile"
         }
     ]
 }
