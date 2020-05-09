@@ -53,17 +53,5 @@ namespace AdditiveManufacturing.Mathematics {
 			output += string.Join("\n", Vertices.Select((x) => x.ToString()));
 			return output;
 		}
-
-		/*public override int GetHashCode() {
-			double sumX = 0;
-			double sumY = 0;
-			double sumZ = 0;
-			foreach (Point3D vertex in Vertices) {
-				sumX += vertex.X;
-				sumY += vertex.Y;
-				sumZ += vertex.Z;
-			}
-			return new Point3D(sumX / Vertices.Length, sumY / Vertices.Length, sumZ / Vertices.Length).GetHashCode();
-		}*/
 	}
 }
