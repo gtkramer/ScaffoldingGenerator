@@ -115,35 +115,47 @@ namespace AdditiveManufacturing {
 
 		private static List<List<Facet>> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex) {
 			List<List<Facet>> unsupportedRegions = new List<List<Facet>>();
-			foreach (Facet facet in unsupportedFacets) {
-				if (!facet.Visited) {
-					unsupportedRegions.Add(ExpandUnsupportedRegion(facet, edgeFacetIndex));
+			foreach (Facet unsupportedFacet in unsupportedFacets) {
+				if (!unsupportedFacet.Visited) {
+					unsupportedRegions.Add(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex));
 				}
 			}
 			return unsupportedRegions;
 		}
 
-		private static List<Facet> ExpandUnsupportedRegion(Facet unsupportedFacet, Point3DTree<List<Facet>> edgeFacetIndex) {
+		private static List<Facet> GrowUnsupportedRegion(Facet unsupportedFacet, Point3DTree<List<Facet>> edgeFacetIndex) {
+			Queue<Facet> adjacentQueue = new Queue<Facet>();
+			adjacentQueue.Enqueue(unsupportedFacet);
+			unsupportedFacet.Visited = true;
+
 			List<Facet> unsupportedRegion = new List<Facet>();
-			Queue<Facet> adjacentFacets = new Queue<Facet>();
-			adjacentFacets.Append(unsupportedFacet);
-			while (adjacentFacets.Count != 0) {
-				Facet adjacentFacet = adjacentFacets.Dequeue();
+			while (adjacentQueue.Count != 0) {
+				Facet adjacentFacet = adjacentQueue.Dequeue();
 				unsupportedRegion.Add(adjacentFacet);
-				adjacentFacet.Visited = true;
-				EnqueueAdjacentFacets(adjacentFacet, edgeFacetIndex, adjacentFacets);
+				EnqueueAdjacentFacets(adjacentFacet, edgeFacetIndex, adjacentQueue);
 			}
 			return unsupportedRegion;
 		}
 
-		private static void EnqueueAdjacentFacets(Facet adjacentFacet, Point3DTree<List<Facet>> edgeFacetIndex, Queue<Facet> adjacentFacets) {
-			foreach (Line3D edge in adjacentFacet.Edges) {
-				foreach (Facet facet in edgeFacetIndex[edge.Midpoint()]) {
-					if (!facet.Visited) {
-						adjacentFacets.Enqueue(facet);
+		private static void EnqueueAdjacentFacets(Facet adjacentFacet, Point3DTree<List<Facet>> edgeFacetIndex, Queue<Facet> adjacentQueue) {
+			foreach (Facet facet in GetAdjacentFacets(adjacentFacet, edgeFacetIndex)) {
+				if (!facet.Visited) {
+					adjacentQueue.Enqueue(facet);
+					facet.Visited = true;
+				}
+			}
+		}
+
+		private static List<Facet> GetAdjacentFacets(Facet facet, Point3DTree<List<Facet>> edgeFacetIndex) {
+			List<Facet> adjacentFacets = new List<Facet>(3);
+			foreach (Line3D edge in facet.Edges) {
+				foreach (Facet adjacentFacet in edgeFacetIndex[edge.Midpoint()]) {
+					if (adjacentFacet != facet) {
+						adjacentFacets.Add(adjacentFacet);
 					}
 				}
 			}
+			return adjacentFacets;
 		}
 	}
 }
