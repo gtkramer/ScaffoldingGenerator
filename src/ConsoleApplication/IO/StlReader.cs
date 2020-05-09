@@ -1,4 +1,4 @@
-﻿using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Mathematics;
 
 namespace AdditiveManufacturing.IO {
 	public abstract class StlReader {

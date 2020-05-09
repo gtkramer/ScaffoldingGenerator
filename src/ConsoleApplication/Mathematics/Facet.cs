@@ -1,4 +1,4 @@
-﻿using MathNet.Spatial.Euclidean;
+using MathNet.Spatial.Euclidean;
 using System.Linq;
 
 namespace AdditiveManufacturing.Mathematics {
