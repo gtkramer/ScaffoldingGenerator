@@ -5,6 +5,8 @@ using AdditiveManufacturing.Mathematics;
 using MathNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;
+using AdditiveManufacturing.Extensions;
+using AdditiveManufacturing.DataStructures;
 
 namespace AdditiveManufacturing {
 	public class Program {
@@ -43,15 +45,22 @@ namespace AdditiveManufacturing {
 			public bool DoContourScaffolding { get; set; }
 		}
 
-		/*struct FacetTracker {
-			public Facet Facet;
-			public bool WasVisited;
-		}*/
-
 		private static void RunOptions(Options opts) {
 			try {
 				Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
-				List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(facets, opts.CriticalAngle);
+				Console.WriteLine("Read " + facets.Length + " facets from file");
+
+				Facet[] unsupportedFacets = GetUnsupportedFacets(facets, opts.CriticalAngle);
+				Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
+
+				Point3DTree<List<Facet>> edgeFacetIndex = BuildEdgeFacetIndex(unsupportedFacets);
+				Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
+
+				CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
+				Console.WriteLine("Association created between facets and edges");
+
+				List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
+				Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
 			}
 			catch (Exception ex) {
 				Console.Error.WriteLine(ex.Message);
@@ -59,75 +68,62 @@ namespace AdditiveManufacturing {
 			}
 		}
 
-		/// <summary>
-		/// Parses facets from file in binary or ASCII
-		/// </summary>
 		private static Facet[] ReadFacetsFromFile(string stlFilePath, bool isStlAscii) {
 			StlReader reader;
 			if (isStlAscii) {
 				reader = new StlAsciiReader();
-			}
-			else {
+			} else {
 				reader = new StlBinaryReader();
 			}
 			return reader.Read(stlFilePath);
 		}
 
-		/// <summary>
-		/// Generate connected regions
-		/// A connected region is defined as the list of facets where every facet in the list
-		/// shares an edge with another facet
-		/// </summary>
-		private static List<List<Facet>> BuildUnsupportedRegions(Facet[] facets, double criticalAngle) {
-			IEnumerable<Facet> unsupportedFacets = facets.Where((x) => DoesFacetNeedSupported(x, criticalAngle));
-			Dictionary<Line3D, List<Facet>> edgeFacetIndex = BuildEdgeFacetIndex(unsupportedFacets);
+		private static Facet[] GetUnsupportedFacets(Facet[] facets, double criticalAngle) {
+			return facets.Where(facet => DoesFacetNeedSupported(facet, criticalAngle)).ToArray();
+		}
+
+		private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle) {
+			return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
+		}
+
+		private static Point3DTree<List<Facet>> BuildEdgeFacetIndex(Facet[] facets) {
+			List<Point3D> keys = new List<Point3D>(facets.Length * 3);
+			foreach (Facet facet in facets) {
+				foreach (Line3D edge in facet.Edges) {
+					keys.Add(edge.Midpoint());
+				}
+			}
+			return new Point3DTree<List<Facet>>(keys);
+		}
+
+		private static void CreateEdgeFacetAssociation(Facet[] facets, Point3DTree<List<Facet>> edgeFacetIndex) {
+			foreach (Facet facet in facets) {
+				foreach (Line3D edge in facet.Edges) {
+					Point3D midpoint = edge.Midpoint();
+					List<Facet> edgeFacetList = edgeFacetIndex[midpoint];
+					if (edgeFacetList == null) {
+						edgeFacetList = new List<Facet>(2);
+						edgeFacetIndex[midpoint] = edgeFacetList;
+					}
+					edgeFacetList.Add(facet);
+				}
+			}
+			if (edgeFacetIndex.Values.Where(list => list != null && list.Count > 2).ToArray().Length > 0) {
+				throw new Exception("Found bad STL file with more than two facets sharing an edge");
+			}
+		}
+
+		private static List<List<Facet>> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex) {
 			List<List<Facet>> unsupportedRegions = new List<List<Facet>>();
-			foreach (Facet unsupportedFacet in unsupportedFacets) {
-				if (!unsupportedFacet.Visited) {
-					unsupportedRegions.Add(ExpandUnsupportedRegion(unsupportedFacet, edgeFacetIndex));
+			foreach (Facet facet in unsupportedFacets) {
+				if (!facet.Visited) {
+					unsupportedRegions.Add(ExpandUnsupportedRegion(facet, edgeFacetIndex));
 				}
 			}
 			return unsupportedRegions;
 		}
 
-		/// <summary>
-		/// Determines whether a facet needs supported with respect to a critical angle
-		/// </summary>
-		private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle) {
-			return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
-		}
-
-		/// <summary>
-		/// Gather facets that share an edge
-		/// A KDTree could deterministically index edges by their value if their midpoint is used.
-		/// However, an implementation of a KDTree that takes a MathNet.Spatial.Euclidean.Point3D as its key
-		/// to avoid a value conversion for every lookup does not exist.  The implementation of the hash function
-		/// for a Line3D looks reasonable enough to avoid implementing a complex data structure.  Don't know if
-		/// it can guarantee uniqueness and avoid collisions though.  To account for this, and to account for
-		/// incorrectness in the STL file, if at any point there are more than two facets that share an edge,
-		/// error out
-		/// </summary>
-		private static Dictionary<Line3D, List<Facet>> BuildEdgeFacetIndex(IEnumerable<Facet> unsupportedFacets) {
-			Dictionary<Line3D, List<Facet>> edgeFacetIndex = new Dictionary<Line3D, List<Facet>>();
-			foreach (Facet unsupportedFacet in unsupportedFacets) {
-				foreach (Line3D edge in unsupportedFacet.Edges) {
-					if (edgeFacetIndex.ContainsKey(edge)) {
-						List<Facet> connectedFacets = edgeFacetIndex[edge];
-						connectedFacets.Add(unsupportedFacet);
-						if (connectedFacets.Count > 2) {
-							throw new Exception("More than two facets share the same edge");
-						}
-					}
-					else {
-						List<Facet> facetList = new List<Facet>() {unsupportedFacet};
-						edgeFacetIndex[edge] = facetList;
-					}
-				}
-			}
-			return edgeFacetIndex;
-		}
-
-		private static List<Facet> ExpandUnsupportedRegion(Facet unsupportedFacet, Dictionary<Line3D, List<Facet>> edgeFacetIndex) {
+		private static List<Facet> ExpandUnsupportedRegion(Facet unsupportedFacet, Point3DTree<List<Facet>> edgeFacetIndex) {
 			List<Facet> unsupportedRegion = new List<Facet>();
 			Queue<Facet> adjacentFacets = new Queue<Facet>();
 			adjacentFacets.Append(unsupportedFacet);
@@ -140,9 +136,9 @@ namespace AdditiveManufacturing {
 			return unsupportedRegion;
 		}
 
-		private static void EnqueueAdjacentFacets(Facet adjacentFacet, Dictionary<Line3D, List<Facet>> edgeFacetIndex, Queue<Facet> adjacentFacets) {
+		private static void EnqueueAdjacentFacets(Facet adjacentFacet, Point3DTree<List<Facet>> edgeFacetIndex, Queue<Facet> adjacentFacets) {
 			foreach (Line3D edge in adjacentFacet.Edges) {
-				foreach (Facet facet in edgeFacetIndex[edge]) {
+				foreach (Facet facet in edgeFacetIndex[edge.Midpoint()]) {
 					if (!facet.Visited) {
 						adjacentFacets.Enqueue(facet);
 					}
