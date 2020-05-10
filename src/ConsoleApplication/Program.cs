@@ -19,15 +19,15 @@ namespace AdditiveManufacturing
     public class Program
     {
         public static void Main(string[] args) {
-            using (RenderWindow render = RenderWindow.CreateInstance()) {
-                render.Run();
+            using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
+                renderWindow.Run();
             }
         }
 
         public static void MainToolWindow(string[] args)
         {
             Application.Init();
-            ToolWindow win = ToolWindow.CreateInstance();
+            ToolWindow toolWindow = ToolWindow.CreateInstance();
             Application.Run();
         }
 
