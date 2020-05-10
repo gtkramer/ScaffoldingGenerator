@@ -21,5 +21,21 @@ namespace AdditiveManufacturing.GUI
         }
 
         private RenderWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings) {}
+
+        protected override void OnLoad() {
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            base.OnLoad();
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs args) {
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            SwapBuffers();
+            base.OnRenderFrame(args);
+        }
+
+        protected override void OnResize(ResizeEventArgs args) {
+            GL.Viewport(0, 0, Size.X, Size.Y);
+            base.OnResize(args);
+        }
     }
 }
