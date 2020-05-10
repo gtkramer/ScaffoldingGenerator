@@ -18,8 +18,13 @@ namespace AdditiveManufacturing
 {
     public class Program
     {
-        [STAThread]
-        public static void Main(string[] args)
+        public static void Main(string[] args) {
+            using (RenderWindow render = new RenderWindow()) {
+                render.Run();
+            }
+        }
+
+        public static void MainToolWindow(string[] args)
         {
             Application.Init();
 
