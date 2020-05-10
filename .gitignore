@@ -3,3 +3,4 @@ obj
 *.tokens
 *.interp
 .antlr
+*.glade~
