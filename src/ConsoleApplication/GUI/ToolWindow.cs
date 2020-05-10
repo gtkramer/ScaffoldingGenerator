@@ -5,7 +5,12 @@ namespace AdditiveManufacturing.GUI
 {
     class ToolWindow : Window
     {
-        public ToolWindow() : this(new Builder("ToolWindow.glade")) { }
+        public static ToolWindow CreateInstance() {
+            Builder builder = new Builder("ToolWindow.glade");
+            ToolWindow toolWindow = new ToolWindow(builder);
+            toolWindow.Show();
+            return toolWindow;
+        }
 
         private ToolWindow(Builder builder) : base(builder.GetObject("ToolWindow").Handle)
         {

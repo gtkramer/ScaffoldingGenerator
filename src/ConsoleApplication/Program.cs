@@ -27,14 +27,7 @@ namespace AdditiveManufacturing
         public static void MainToolWindow(string[] args)
         {
             Application.Init();
-
-            Application app = new Application("org.gtkramer.ScaffoldingGenerator", GLib.ApplicationFlags.None);
-            app.Register(GLib.Cancellable.Current);
-
-            ToolWindow win = new ToolWindow();
-            app.AddWindow(win);
-
-            win.Show();
+            ToolWindow win = ToolWindow.CreateInstance();
             Application.Run();
         }
 
