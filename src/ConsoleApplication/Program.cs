@@ -19,7 +19,7 @@ namespace AdditiveManufacturing
     public class Program
     {
         public static void Main(string[] args) {
-            using (RenderWindow render = new RenderWindow()) {
+            using (RenderWindow render = RenderWindow.CreateInstance()) {
                 render.Run();
             }
         }
