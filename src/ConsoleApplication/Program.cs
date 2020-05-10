@@ -28,12 +28,13 @@ namespace AdditiveManufacturing
 
             win.Show();
             Application.Run();
+        }
 
-
-            /*Parser.Default.ParseArguments<Options>(args)
-			.WithParsed<Options>(RunOptions);
-			//.WithNotParsed<Options>(HandleParseError);
-			*/
+        public static void MainCmdLine(string[] args)
+        {
+            Parser.Default.ParseArguments<Options>(args)
+            .WithParsed<Options>(RunOptions);
+            //.WithNotParsed<Options>(HandleParseError);
         }
 
         public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
