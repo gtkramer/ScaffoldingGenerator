@@ -10,7 +10,10 @@ using AdditiveManufacturing.DataStructures;
 using AdditiveManufacturing.GUI;
 using Gtk;
 
-
+/*
+http://www.oldschoolpixels.com/?p=390
+http://grbd.github.io/posts/2016/06/25/gtksharp-part-3-basic-example-with-vs-and-glade/
+*/
 namespace AdditiveManufacturing
 {
     public class Program
@@ -23,7 +26,7 @@ namespace AdditiveManufacturing
             Application app = new Application("org.gtkramer.ScaffoldingGenerator", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
 
-            MainWindow win = new MainWindow();
+            ToolWindow win = new ToolWindow();
             app.AddWindow(win);
 
             win.Show();

@@ -3,11 +3,11 @@ using Gtk;
 
 namespace AdditiveManufacturing.GUI
 {
-    class MainWindow : Window
+    class ToolWindow : Window
     {
-        public MainWindow() : this(new Builder("MainWindow.glade")) { }
+        public ToolWindow() : this(new Builder("ToolWindow.glade")) { }
 
-        private MainWindow(Builder builder) : base(builder.GetObject("MainWindow").Handle)
+        private ToolWindow(Builder builder) : base(builder.GetObject("ToolWindow").Handle)
         {
             builder.Autoconnect(this);
 
