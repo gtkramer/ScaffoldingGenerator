@@ -23,7 +23,8 @@ namespace AdditiveManufacturing.GUI
         private RenderWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings) {}
 
         protected override void OnLoad() {
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            SwapBuffers();
             base.OnLoad();
         }
 
