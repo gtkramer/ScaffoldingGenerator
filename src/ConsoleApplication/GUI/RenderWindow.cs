@@ -4,8 +4,6 @@ using OpenToolkit.Mathematics;
 using OpenToolkit.Windowing.Common;
 using OpenToolkit.Graphics.OpenGL4;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace AdditiveManufacturing.GUI
 {
