@@ -71,7 +71,7 @@ namespace AdditiveManufacturing
                 Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
                 Console.WriteLine("Read " + facets.Length + " facets from file");
 
-                Facet[] unsupportedFacets = GetUnsupportedFacets(facets, opts.CriticalAngle);
+                Facet[] unsupportedFacets = facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
                 Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
 
                 Point3DTree<List<Facet>> edgeFacetIndex = BuildEdgeFacetIndex(unsupportedFacets);
@@ -107,11 +107,6 @@ namespace AdditiveManufacturing
                 reader = new StlBinaryReader();
             }
             return reader.Read(stlFilePath);
-        }
-
-        private static Facet[] GetUnsupportedFacets(Facet[] facets, double criticalAngle)
-        {
-            return facets.Where(facet => DoesFacetNeedSupported(facet, criticalAngle)).ToArray();
         }
 
         private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle)
