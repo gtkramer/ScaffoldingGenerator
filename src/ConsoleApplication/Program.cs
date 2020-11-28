@@ -19,9 +19,12 @@ namespace AdditiveManufacturing
     public class Program
     {
         public static void Main(string[] args) {
-            using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
-                renderWindow.Run();
-            }
+            //using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
+            //    renderWindow.Run();
+            //}
+            Parser.Default.ParseArguments<Options>(args)
+            .WithParsed<Options>(RunOptions);
+            //.WithNotParsed<Options>(HandleParseError);
         }
 
         public static void MainToolWindow(string[] args)
@@ -29,13 +32,6 @@ namespace AdditiveManufacturing
             Application.Init();
             ToolWindow toolWindow = ToolWindow.CreateInstance();
             Application.Run();
-        }
-
-        public static void MainCmdLine(string[] args)
-        {
-            Parser.Default.ParseArguments<Options>(args)
-            .WithParsed<Options>(RunOptions);
-            //.WithNotParsed<Options>(HandleParseError);
         }
 
         public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
@@ -86,6 +82,11 @@ namespace AdditiveManufacturing
 
                 List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
                 Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
+
+                List<List<Facet>> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
+                Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
+
+                // Create line and contour scaffolding with filtered regions
             }
             catch (Exception ex)
             {
@@ -208,6 +209,60 @@ namespace AdditiveManufacturing
                 }
             }
             return adjacentFacets;
+        }
+
+        private static bool IsLargeRegion(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
+        {
+            bool isLargeRegion = false;
+            List<Vector3D> largeDiagonals = GetLargeDiagonals(GetBoundingVertices(region, edgeFacetIndex), dimensionLength);
+            for (int i = 0; i != largeDiagonals.Count && !isLargeRegion; i++)
+            {
+                Vector3D diagonal1 = largeDiagonals[i];
+                for (int j = i; j != largeDiagonals.Count && !isLargeRegion; j++)
+                {
+                    Vector3D diagonal2 = largeDiagonals[j];
+                    double angleBetween = diagonal1.AngleTo(diagonal2).Degrees;
+                    if (angleBetween >= 90 - toleranceAngle && angleBetween <= 90 + toleranceAngle) {
+                        isLargeRegion = true;
+                    }
+                }
+            }
+            return isLargeRegion;
+        }
+
+        private static Point3D[] GetBoundingVertices(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex)
+        {
+            List<Point3D> boundingVertices = new List<Point3D>();
+            foreach (Facet facet in region)
+            {
+                foreach (Line3D edge in facet.Edges)
+                {
+                    if (edgeFacetIndex[edge.Midpoint()].Count == 1)
+                    {
+                        boundingVertices.Add(edge.StartPoint);
+                        boundingVertices.Add(edge.EndPoint);
+                    }
+                }
+            }
+            Point3D[] uniqueVertices = boundingVertices.Distinct(new Point3DComparer()).ToArray();
+            return uniqueVertices;
+        }
+
+        private static List<Vector3D> GetLargeDiagonals(Point3D[] boundingVertices, double dimensionLength)
+        {
+            List<Vector3D> diagonals = new List<Vector3D>();
+            for (int i = 0; i != boundingVertices.Length; i++)
+            {
+                Point3D point1 = boundingVertices[i];
+                for (int j = i; j != boundingVertices.Length; j++) {
+                    Point3D point2 = boundingVertices[j];
+                    if (point1.DistanceTo(point2) >= dimensionLength)
+                    {
+                        diagonals.Add(new Vector3D(point2.X - point1.X, point2.Y - point1.Y, point2.Z - point1.Z));
+                    }
+                }
+            }
+            return diagonals;
         }
     }
 }
