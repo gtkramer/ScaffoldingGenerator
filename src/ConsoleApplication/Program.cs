@@ -66,6 +66,7 @@ namespace AdditiveManufacturing
 
         private static void RunOptions(Options opts)
         {
+            // TODO: Make sure the best versions of these generic collections are being used in the right places.
             try
             {
                 Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
