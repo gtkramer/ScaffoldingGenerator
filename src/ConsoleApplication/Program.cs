@@ -5,7 +5,6 @@ using AdditiveManufacturing.Mathematics;
 using MathNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;
-using AdditiveManufacturing.Extensions;
 using AdditiveManufacturing.DataStructures;
 using AdditiveManufacturing.GUI;
 using Gtk;
@@ -120,10 +119,7 @@ namespace AdditiveManufacturing
             List<Point3D> keys = new List<Point3D>(facets.Length * 3);
             foreach (Facet facet in facets)
             {
-                foreach (Line3D edge in facet.Edges)
-                {
-                    keys.Add(edge.Midpoint());
-                }
+                keys.AddRange(facet.EdgeMidPoints);
             }
             return new Point3DTree<List<Facet>>(keys);
         }
@@ -132,14 +128,13 @@ namespace AdditiveManufacturing
         {
             foreach (Facet facet in facets)
             {
-                foreach (Line3D edge in facet.Edges)
+                foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
                 {
-                    Point3D midpoint = edge.Midpoint();
-                    List<Facet> edgeFacetList = edgeFacetIndex[midpoint];
+                    List<Facet> edgeFacetList = edgeFacetIndex[edgeMidPoint];
                     if (edgeFacetList == null)
                     {
                         edgeFacetList = new List<Facet>(2);
-                        edgeFacetIndex[midpoint] = edgeFacetList;
+                        edgeFacetIndex[edgeMidPoint] = edgeFacetList;
                     }
                     edgeFacetList.Add(facet);
                 }
@@ -194,9 +189,9 @@ namespace AdditiveManufacturing
         private static List<Facet> GetAdjacentFacets(Facet facet, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             List<Facet> adjacentFacets = new List<Facet>(3);
-            foreach (Line3D edge in facet.Edges)
+            foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
             {
-                foreach (Facet adjacentFacet in edgeFacetIndex[edge.Midpoint()])
+                foreach (Facet adjacentFacet in edgeFacetIndex[edgeMidPoint])
                 {
                     if (adjacentFacet != facet)
                     {
@@ -226,31 +221,29 @@ namespace AdditiveManufacturing
             return isLargeRegion;
         }
 
-        private static Point3D[] GetBoundingVertices(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Point3D> GetBoundingVertices(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             List<Point3D> boundingVertices = new List<Point3D>();
             foreach (Facet facet in region)
             {
-                foreach (Line3D edge in facet.Edges)
+                foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
                 {
-                    if (edgeFacetIndex[edge.Midpoint()].Count == 1)
+                    if (edgeFacetIndex[edgeMidPoint].Count == 1)
                     {
-                        boundingVertices.Add(edge.StartPoint);
-                        boundingVertices.Add(edge.EndPoint);
+                        boundingVertices.Add(edgeMidPoint);
                     }
                 }
             }
-            Point3D[] uniqueVertices = boundingVertices.Distinct(new Point3DComparer()).ToArray();
-            return uniqueVertices;
+            return boundingVertices;
         }
 
-        private static List<Vector3D> GetLargeDiagonals(Point3D[] boundingVertices, double dimensionLength)
+        private static List<Vector3D> GetLargeDiagonals(List<Point3D> boundingVertices, double dimensionLength)
         {
             List<Vector3D> diagonals = new List<Vector3D>();
-            for (int i = 0; i != boundingVertices.Length; i++)
+            for (int i = 0; i != boundingVertices.Count; i++)
             {
                 Point3D point1 = boundingVertices[i];
-                for (int j = i; j != boundingVertices.Length; j++) {
+                for (int j = i; j != boundingVertices.Count; j++) {
                     Point3D point2 = boundingVertices[j];
                     if (point1.DistanceTo(point2) >= dimensionLength)
                     {

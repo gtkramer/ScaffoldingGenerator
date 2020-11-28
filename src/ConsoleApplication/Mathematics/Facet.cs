@@ -8,6 +8,7 @@ namespace AdditiveManufacturing.Mathematics
         public Vector3D Normal;
         public Point3D[] Vertices;
         public Line3D[] Edges;
+        public Point3D[] EdgeMidPoints;
         public Point3D MinPoint;
         public Point3D MaxPoint;
         public bool Visited;
@@ -17,9 +18,11 @@ namespace AdditiveManufacturing.Mathematics
             Normal = normal;
             Vertices = vertices;
             Edges = new Line3D[vertices.Length];
+            EdgeMidPoints = new Point3D[Edges.Length];
             for (int i = 0; i < Edges.Length; i++)
             {
                 Edges[i] = i + 1 < Edges.Length ? new Line3D(vertices[i], vertices[i + 1]) : new Line3D(vertices[i], vertices[0]);
+                EdgeMidPoints[i] = Point3D.MidPoint(Edges[i].StartPoint, Edges[i].EndPoint);
             }
 
             double minX, minY, minZ;
