@@ -68,7 +68,7 @@ namespace AdditiveManufacturing
                 Facet[] unsupportedFacets = facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
                 Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
 
-                Point3DTree<List<Facet>> edgeFacetIndex = BuildEdgeFacetIndex(unsupportedFacets);
+                Point3DTree<List<Facet>> edgeFacetIndex = new Point3DTree<List<Facet>>(GetFacetTreeKeys(unsupportedFacets));
                 Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
 
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
@@ -108,14 +108,14 @@ namespace AdditiveManufacturing
             return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
         }
 
-        private static Point3DTree<List<Facet>> BuildEdgeFacetIndex(Facet[] facets)
+        private static List<Point3D> GetFacetTreeKeys(Facet[] facets)
         {
             List<Point3D> keys = new List<Point3D>(facets.Length * 3);
             foreach (Facet facet in facets)
             {
                 keys.AddRange(facet.EdgeMidPoints);
             }
-            return new Point3DTree<List<Facet>>(keys);
+            return keys;
         }
 
         private static void CreateEdgeFacetAssociation(Facet[] facets, Point3DTree<List<Facet>> edgeFacetIndex)
