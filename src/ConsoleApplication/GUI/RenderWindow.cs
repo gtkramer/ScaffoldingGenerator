@@ -1,8 +1,8 @@
 using System;
-using OpenToolkit.Windowing.Desktop;
-using OpenToolkit.Mathematics;
-using OpenToolkit.Windowing.Common;
-using OpenToolkit.Graphics.OpenGL4;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.Common;
+using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL4;
 using System.Collections.Generic;
 
 namespace AdditiveManufacturing.GUI
@@ -59,7 +59,7 @@ namespace AdditiveManufacturing.GUI
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 GL.DeleteBuffer(vertexBufferObject);
             }
-            Shader.Dispose();
+            //Shader.Dispose();
             base.OnUnload();
         }
     }

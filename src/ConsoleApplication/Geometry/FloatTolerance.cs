@@ -2,7 +2,7 @@ using System;
 
 namespace AdditiveManufacturing.Geometry
 {
-    public static class Tolerance
+    public static class FloatTolerance
     {
         public static bool AlmostEqualsAbsolute(float f1, float f2, float maxAbsErr = (float)2.4735252E-6)
         {

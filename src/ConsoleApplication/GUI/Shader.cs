@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using OpenToolkit.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 
 namespace AdditiveManufacturing.GUI {
     public class Shader : IDisposable

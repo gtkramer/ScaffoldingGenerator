@@ -16,16 +16,35 @@ namespace AdditiveManufacturing
 {
     public class Program
     {
-        public static void Main(string[] args) {
-            //using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
-            //    renderWindow.Run();
-            //}
+        public static void Main(string[] args)
+        {
+            //MainRenderWindow(args);
+            //MainToolWindow(args);
+            MainCmdLine(args);
+        }
+
+        private static void MainRenderWindow(string[] args)
+        {
+            using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
+                renderWindow.Run();
+            }
+        }
+
+        private static void MainToolWindow(string[] args)
+        {
+            Gtk.Application.Init();
+            ToolWindow toolWindow = ToolWindow.CreateInstance();
+            Gtk.Application.Run();
+        }
+
+        private static void MainCmdLine(string[] args)
+        {
             Parser.Default.ParseArguments<Options>(args)
             .WithParsed<Options>(RunOptions);
             //.WithNotParsed<Options>(HandleParseError);
         }
 
-        public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
+        private static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
         private static IEqualityComparer<Point3D> Point3DComparer = new Point3DComparer();
 
         public class Options
@@ -61,6 +80,7 @@ namespace AdditiveManufacturing
             // TODO: Make sure the best versions of these generic collections are being used in the right places.
             // Use arrays when size is known and is not expected to change
             // Otherwise, use a list
+            // Consider places where we can avoid a conversion of .ToArray/.ToList and rely on the IEnumerable interface
             try
             {
                 Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
