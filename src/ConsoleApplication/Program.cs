@@ -141,41 +141,42 @@ namespace AdditiveManufacturing
 
         private static List<Region> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
         {
+            Point3DTree<bool> facetVisitedIndex = new Point3DTree<bool>(unsupportedFacets.Select(facet => facet.Centroid));
             List<Region> unsupportedRegions = new List<Region>();
             foreach (Facet unsupportedFacet in unsupportedFacets)
             {
-                if (!unsupportedFacet.Visited)
+                if (!facetVisitedIndex[unsupportedFacet.Centroid])
                 {
-                    unsupportedRegions.Add(new Region(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex)));
+                    unsupportedRegions.Add(new Region(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex, facetVisitedIndex)));
                 }
             }
             return unsupportedRegions;
         }
 
-        private static List<Facet> GrowUnsupportedRegion(Facet unsupportedFacet, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Facet> GrowUnsupportedRegion(Facet unsupportedFacet, Point3DTree<List<Facet>> edgeFacetIndex, Point3DTree<bool> facetVisitedIndex)
         {
             Queue<Facet> adjacentQueue = new Queue<Facet>();
             adjacentQueue.Enqueue(unsupportedFacet);
-            unsupportedFacet.Visited = true;
+            facetVisitedIndex[unsupportedFacet.Centroid] = true;
 
             List<Facet> unsupportedRegion = new List<Facet>();
             while (adjacentQueue.Count != 0)
             {
                 Facet adjacentFacet = adjacentQueue.Dequeue();
                 unsupportedRegion.Add(adjacentFacet);
-                EnqueueAdjacentFacets(adjacentFacet, edgeFacetIndex, adjacentQueue);
+                EnqueueAdjacentFacets(adjacentFacet, adjacentQueue, edgeFacetIndex, facetVisitedIndex);
             }
             return unsupportedRegion;
         }
 
-        private static void EnqueueAdjacentFacets(Facet adjacentFacet, Point3DTree<List<Facet>> edgeFacetIndex, Queue<Facet> adjacentQueue)
+        private static void EnqueueAdjacentFacets(Facet adjacentFacet, Queue<Facet> adjacentQueue, Point3DTree<List<Facet>> edgeFacetIndex, Point3DTree<bool> facetVisitedIndex)
         {
             foreach (Facet facet in GetAdjacentFacets(adjacentFacet, edgeFacetIndex))
             {
-                if (!facet.Visited)
+                if (!facetVisitedIndex[facet.Centroid])
                 {
                     adjacentQueue.Enqueue(facet);
-                    facet.Visited = true;
+                    facetVisitedIndex[facet.Centroid] = true;
                 }
             }
         }
