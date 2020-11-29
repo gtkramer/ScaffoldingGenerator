@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MathNet.Spatial.Euclidean;
 
 namespace AdditiveManufacturing.DataStructures
@@ -8,13 +7,12 @@ namespace AdditiveManufacturing.DataStructures
     public class Point3DTree<T>
     {
         private static IComparer<Point3D>[] CoordComparers = { new Point3DXComparer(), new Point3DYComparer(), new Point3DZComparer() };
-        private static IEqualityComparer<Point3D> DistinctComparer = new Point3DComparer();
         public Point3D[] Keys;
         public T[] Values;
 
-        public Point3DTree(IEnumerable<Point3D> points)
+        public Point3DTree(Point3D[] keys)
         {
-            Keys = points.Distinct(DistinctComparer).ToArray();
+            Keys = keys;
             Values = new T[Keys.Length];
             BuildRecursively(Keys, 0, Keys.Length, 0);
         }

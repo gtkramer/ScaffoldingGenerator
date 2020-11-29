@@ -26,6 +26,7 @@ namespace AdditiveManufacturing
         }
 
         public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
+        private static IEqualityComparer<Point3D> VertexComparer = new Point3DComparer();
 
         public class Options
         {
@@ -68,7 +69,7 @@ namespace AdditiveManufacturing
                 Facet[] unsupportedFacets = facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
                 Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
 
-                Point3DTree<List<Facet>> edgeFacetIndex = new Point3DTree<List<Facet>>(GetFacetTreeKeys(unsupportedFacets));
+                Point3DTree<List<Facet>> edgeFacetIndex = new Point3DTree<List<Facet>>(facets.SelectMany(facet => facet.EdgeMidPoints).Distinct(VertexComparer).ToArray());
                 Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
 
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
@@ -108,16 +109,6 @@ namespace AdditiveManufacturing
             return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
         }
 
-        private static List<Point3D> GetFacetTreeKeys(Facet[] facets)
-        {
-            List<Point3D> keys = new List<Point3D>(facets.Length * 3);
-            foreach (Facet facet in facets)
-            {
-                keys.AddRange(facet.EdgeMidPoints);
-            }
-            return keys;
-        }
-
         private static void CreateEdgeFacetAssociation(Facet[] facets, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             foreach (Facet facet in facets)
@@ -141,7 +132,7 @@ namespace AdditiveManufacturing
 
         private static List<Region> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
         {
-            Point3DTree<bool> facetVisitedIndex = new Point3DTree<bool>(unsupportedFacets.Select(facet => facet.Centroid));
+            Point3DTree<bool> facetVisitedIndex = new Point3DTree<bool>(unsupportedFacets.Select(facet => facet.Centroid).ToArray());
             List<Region> unsupportedRegions = new List<Region>();
             foreach (Facet unsupportedFacet in unsupportedFacets)
             {
