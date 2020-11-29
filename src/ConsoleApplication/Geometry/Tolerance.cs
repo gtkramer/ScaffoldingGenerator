@@ -1,6 +1,6 @@
 using System;
 
-namespace AdditiveManufacturing.Mathematics
+namespace AdditiveManufacturing.Geometry
 {
     public static class Tolerance
     {

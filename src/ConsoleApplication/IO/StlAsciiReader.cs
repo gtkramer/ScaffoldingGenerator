@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using AdditiveManufacturing.IO;
-using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Geometry;
 using Antlr4.Runtime;
 using MathNet.Spatial.Euclidean;
 using System.Linq;

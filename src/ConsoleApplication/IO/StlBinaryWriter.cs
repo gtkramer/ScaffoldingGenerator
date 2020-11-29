@@ -1,6 +1,6 @@
 using System.IO;
 using MathNet.Spatial.Euclidean;
-using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Geometry;
 using System;
 
 namespace AdditiveManufacturing.IO

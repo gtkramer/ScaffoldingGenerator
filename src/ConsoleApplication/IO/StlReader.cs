@@ -1,4 +1,4 @@
-using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Geometry;
 
 namespace AdditiveManufacturing.IO
 {

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 using AdditiveManufacturing.IO;
-using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Geometry;
 
 namespace FunctionalTests {
 	public class UnitTest1 {

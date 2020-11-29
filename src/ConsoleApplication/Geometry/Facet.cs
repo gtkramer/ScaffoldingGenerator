@@ -1,7 +1,7 @@
 using MathNet.Spatial.Euclidean;
 using System.Linq;
 
-namespace AdditiveManufacturing.Mathematics
+namespace AdditiveManufacturing.Geometry
 {
     public class Facet
     {

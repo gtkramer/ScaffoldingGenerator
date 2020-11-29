@@ -1,7 +1,7 @@
 using System;
 using CommandLine;
 using AdditiveManufacturing.IO;
-using AdditiveManufacturing.Mathematics;
+using AdditiveManufacturing.Geometry;
 using MathNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MathNet.Spatial.Euclidean;
 
-namespace AdditiveManufacturing.Mathematics
+namespace AdditiveManufacturing.Geometry
 {
     public class Region
     {
