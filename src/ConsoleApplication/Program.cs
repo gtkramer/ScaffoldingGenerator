@@ -26,7 +26,7 @@ namespace AdditiveManufacturing
         }
 
         public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
-        private static IEqualityComparer<Point3D> VertexComparer = new Point3DComparer();
+        private static IEqualityComparer<Point3D> Point3DComparer = new Point3DComparer();
 
         public class Options
         {
@@ -69,7 +69,7 @@ namespace AdditiveManufacturing
                 Facet[] unsupportedFacets = facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
                 Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
 
-                Point3DTree<List<Facet>> edgeFacetIndex = new Point3DTree<List<Facet>>(facets.SelectMany(facet => facet.EdgeMidPoints).Distinct(VertexComparer).ToArray());
+                Point3DTree<List<Facet>> edgeFacetIndex = new Point3DTree<List<Facet>>(GetEdgeFacetKeys(unsupportedFacets));
                 Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
 
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
@@ -107,6 +107,16 @@ namespace AdditiveManufacturing
         private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle)
         {
             return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
+        }
+
+        private static Point3D[] GetEdgeFacetKeys(Facet[] facets)
+        {
+            List<Point3D> keys = new List<Point3D>(facets.Length * 3);
+            foreach (Facet facet in facets)
+            {
+                keys.AddRange(facet.EdgeMidPoints);
+            }
+            return keys.Distinct(Point3DComparer).ToArray();
         }
 
         private static void CreateEdgeFacetAssociation(Facet[] facets, Point3DTree<List<Facet>> edgeFacetIndex)

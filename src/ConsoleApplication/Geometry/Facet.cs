@@ -15,7 +15,7 @@ namespace AdditiveManufacturing.Geometry
         {
             Normal = normal;
             Vertices = vertices;
-            Centroid = new Point3D(Vertices.Sum(vertex => vertex.X) / vertices.Length, Vertices.Sum(vertex => vertex.Y) / vertices.Length, Vertices.Sum(vertex => vertex.Z) / vertices.Length);
+            Centroid = new Point3D(vertices.Sum(vertex => vertex.X) / vertices.Length, vertices.Sum(vertex => vertex.Y) / vertices.Length, vertices.Sum(vertex => vertex.Z) / vertices.Length);
             Edges = new Line3D[vertices.Length];
             EdgeMidPoints = new Point3D[Edges.Length];
             for (int i = 0; i < Edges.Length; i++)
