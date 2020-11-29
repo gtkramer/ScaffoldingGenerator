@@ -5,7 +5,7 @@ using MathNet.Spatial.Euclidean;
 
 namespace AdditiveManufacturing.DataStructures
 {
-    public class Point3DTree<T> where T : class
+    public class Point3DTree<T>
     {
         private static IComparer<Point3D>[] CoordComparers = { new Point3DXComparer(), new Point3DYComparer(), new Point3DZComparer() };
         private static IEqualityComparer<Point3D> DistinctComparer = new Point3DComparer();
