@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AdditiveManufacturing.DataStructures;
 using AdditiveManufacturing.GUI;
-using Gtk;
 
 /*
 http://www.oldschoolpixels.com/?p=390
@@ -24,13 +23,6 @@ namespace AdditiveManufacturing
             Parser.Default.ParseArguments<Options>(args)
             .WithParsed<Options>(RunOptions);
             //.WithNotParsed<Options>(HandleParseError);
-        }
-
-        public static void MainToolWindow(string[] args)
-        {
-            Application.Init();
-            ToolWindow toolWindow = ToolWindow.CreateInstance();
-            Application.Run();
         }
 
         public static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
@@ -66,6 +58,8 @@ namespace AdditiveManufacturing
         private static void RunOptions(Options opts)
         {
             // TODO: Make sure the best versions of these generic collections are being used in the right places.
+            // Use arrays when size is known and is not expected to change
+            // Otherwise, use a list
             try
             {
                 Facet[] facets = ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii);
@@ -80,10 +74,10 @@ namespace AdditiveManufacturing
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
                 Console.WriteLine("Association created between facets and edges");
 
-                List<List<Facet>> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
+                List<Region> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
                 Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
 
-                List<List<Facet>> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
+                List<Region> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
                 Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
 
                 // Create line and contour scaffolding with filtered regions
@@ -145,14 +139,14 @@ namespace AdditiveManufacturing
             }
         }
 
-        private static List<List<Facet>> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Region> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
         {
-            List<List<Facet>> unsupportedRegions = new List<List<Facet>>();
+            List<Region> unsupportedRegions = new List<Region>();
             foreach (Facet unsupportedFacet in unsupportedFacets)
             {
                 if (!unsupportedFacet.Visited)
                 {
-                    unsupportedRegions.Add(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex));
+                    unsupportedRegions.Add(new Region(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex)));
                 }
             }
             return unsupportedRegions;
@@ -202,7 +196,7 @@ namespace AdditiveManufacturing
             return adjacentFacets;
         }
 
-        private static bool IsLargeRegion(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
+        private static bool IsLargeRegion(Region region, Point3DTree<List<Facet>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
         {
             bool isLargeRegion = false;
             List<Vector3D> largeDiagonals = GetLargeDiagonals(GetBoundingVertices(region, edgeFacetIndex), dimensionLength);
@@ -221,10 +215,10 @@ namespace AdditiveManufacturing
             return isLargeRegion;
         }
 
-        private static List<Point3D> GetBoundingVertices(List<Facet> region, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Point3D> GetBoundingVertices(Region region, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             List<Point3D> boundingVertices = new List<Point3D>();
-            foreach (Facet facet in region)
+            foreach (Facet facet in region.Facets)
             {
                 foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
                 {
