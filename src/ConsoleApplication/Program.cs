@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdditiveManufacturing.DataStructures;
 using AdditiveManufacturing.GUI;
+using AdditiveManufacturing.Extensions;
 
 /*
 http://www.oldschoolpixels.com/?p=390
@@ -44,7 +45,13 @@ namespace AdditiveManufacturing
             //.WithNotParsed<Options>(HandleParseError);
         }
 
-        private static UnitVector3D PerpendicularNormal = UnitVector3D.Create(0, 0, 1);
+        // Pointing in Z direction
+        private static UnitVector3D XYNormal = UnitVector3D.Create(0, 0, 1);
+        // Pointing in Y direction
+        private static UnitVector3D XZNormal = UnitVector3D.Create(0, 1, 0);
+        // Pointing in X direction
+        private static UnitVector3D YZNormal = UnitVector3D.Create(1, 0, 0);
+
         private static IEqualityComparer<Point3D> Point3DComparer = new Point3DComparer();
 
         public class Options
@@ -64,7 +71,7 @@ namespace AdditiveManufacturing
             public double ScaffoldingAngle { get; set; }
             [Option("support-spacing", Required = false, Default = 0.125, HelpText = "Spacing between line supports")]
             public double SupportSpacing { get; set; }
-            [Option("plate-spacing", Required = false, Default = 0.5, HelpText = "Spacing above build plate")]
+            [Option("plate-spacing", Required = false, Default = 0.5, HelpText = "Scaffolded space between model and build plate")]
             public double PlateSpacing { get; set; }
 
             [Option("x-scaffolding", Required = false, Default = true, HelpText = "Generate X scaffolding")]
@@ -101,7 +108,18 @@ namespace AdditiveManufacturing
                 List<Region> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
                 Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
 
-                // Create line and contour scaffolding with filtered regions
+                List<Facet> xFacets = new List<Facet>();
+                List<Facet> yFacets = new List<Facet>();
+                // List<Facet> contourFacets = new List<Facet>();
+                if (opts.DoXScaffolding) {
+                    xFacets = GenerateLineScaffolding(largeRegions, YZNormal, opts.SupportSpacing, opts.PlateSpacing);
+                }
+                if (opts.DoYScaffolding) {
+                    yFacets = GenerateLineScaffolding(largeRegions, XZNormal, opts.SupportSpacing, opts.PlateSpacing);
+                }
+                // if (opts.DoContourScaffolding) {
+                //     contourFacets = GenerateContourScaffolding(largeRegions, opts.PlateSpacing);
+                // }
             }
             catch (Exception ex)
             {
@@ -126,7 +144,7 @@ namespace AdditiveManufacturing
 
         private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle)
         {
-            return facet.Normal.AngleTo(PerpendicularNormal).Degrees > 180 - criticalAngle;
+            return facet.Normal.AngleTo(XYNormal).Degrees > 180 - criticalAngle;
         }
 
         private static Point3D[] GetEdgeFacetKeys(Facet[] facets)
@@ -268,6 +286,70 @@ namespace AdditiveManufacturing
                 }
             }
             return diagonals;
+        }
+
+        private static List<Facet> GenerateLineScaffolding(List<Region> regions, UnitVector3D supportNormal, double supportSpacing, double plateSpacing) {
+            List<Facet> scaffolding = new List<Facet>();
+            foreach (Region region in regions) {
+                foreach (List<Point3D> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
+                    scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing));
+                }
+            }
+            return scaffolding;
+        }
+
+        private static List<List<Point3D>> GetLineSupportIntersections(Region region, UnitVector3D supportNormal, double supportSpacing) {
+            List<List<Point3D>> intersectionPointSets = new List<List<Point3D>>();
+            List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
+            foreach (Plane plane in planes) {
+                List<Point3D> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
+                if (intersectionPoints.Count != 0) {
+                    intersectionPointSets.Add(intersectionPoints);
+                }
+            }
+            return intersectionPointSets;
+        }
+
+        private static List<Plane> GetLineSupportPlanes(Region region, UnitVector3D supportNormal, double supportSpacing) {
+            List<Plane> planes = new List<Plane>();
+            planes.Add(new Plane(supportNormal, region.CenterPoint));
+            int numIntervals = (int)(region.MinPoint.DistanceTo(region.MaxPoint) / supportSpacing / 2) + 1;
+            for (int i = 1; i != numIntervals; i++) {
+                double shift = i * supportSpacing;
+                Point3D positivePoint = region.CenterPoint.Move(supportNormal, shift);
+                if (region.ContainsPoint(positivePoint)) {
+                    planes.Add(new Plane(supportNormal, positivePoint));
+                }
+                Point3D negativePoint = region.CenterPoint.Move(supportNormal, -shift);
+                if (region.ContainsPoint(negativePoint)) {
+                    planes.Add(new Plane(supportNormal, negativePoint));
+                }
+            }
+            return planes;
+        }
+
+        private static List<Point3D> GetLineScaffoldingIntersections(Region region, Plane support) {
+            List<Point3D> intersections = new List<Point3D>();
+            foreach (Facet facet in region.Facets) {
+                foreach (Line3D edge in facet.Edges) {
+                    Point3D? intersection = support.IntersectionWith(edge);
+                    if (intersection.HasValue) {
+                        intersections.Add(intersection.Value);
+                    }
+                }
+            }
+            return intersections;
+        }
+
+        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing) {
+            IOrderedEnumerable<Point3D> sortedPoints = intersectionPoints.OrderBy(point => point.X).ThenBy(point => point.Y);
+            intersectionPoints.OrderBy(points => points.Z).First();
+            // Create common row of points to which form initial leveling set of triangles
+            // Then determine the size of a point grid
+            // Fill points in point grid
+            // Triangulate points in point grid
+            // buildPlateZ = partminZ - PlateSpacing;
+            return new Facet[]{};
         }
     }
 }

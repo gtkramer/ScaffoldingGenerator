@@ -8,6 +8,7 @@ namespace AdditiveManufacturing.Geometry
         public List<Facet> Facets;
         public Point3D MinPoint;
         public Point3D MaxPoint;
+        public Point3D CenterPoint;
 
         public Region(List<Facet> facets)
         {
@@ -50,6 +51,13 @@ namespace AdditiveManufacturing.Geometry
             }
             MinPoint = new Point3D(minX, minY, minZ);
             MaxPoint = new Point3D(maxX, maxY, maxZ);
+            CenterPoint = Point3D.MidPoint(MinPoint, MaxPoint);
+        }
+
+        public bool ContainsPoint(Point3D point) {
+            return point.X >= MinPoint.X && point.X <= MaxPoint.X &&
+            point.Y >= MinPoint.Y && point.Y <= MaxPoint.Y &&
+            point.Z >= MinPoint.Z && point.Z <= MaxPoint.Z;
         }
     }
 }

@@ -1,0 +1,9 @@
+using MathNet.Spatial.Euclidean;
+
+namespace AdditiveManufacturing.Extensions {
+    public static class Ext {
+        public static Point3D Move(this Point3D point, UnitVector3D direction, double scalar) {
+            return (point.ToVector3D() + direction.ScaleBy(scalar)).ToPoint3D();
+        }
+    }
+}
