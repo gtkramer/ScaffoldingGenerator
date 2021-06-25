@@ -3,14 +3,14 @@ using MathNet.Spatial.Euclidean;
 
 namespace AdditiveManufacturing.Geometry
 {
-    public class Region
+    public class Polygon3D
     {
-        public List<Facet> Facets;
+        public Facet[] Facets;
         public Point3D MinPoint;
         public Point3D MaxPoint;
         public Point3D CenterPoint;
 
-        public Region(List<Facet> facets)
+        public Polygon3D(Facet[] facets)
         {
             Facets = facets;
 
