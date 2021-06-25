@@ -362,7 +362,7 @@ namespace AdditiveManufacturing
                 }
             }
             Console.WriteLine("Found " + intersections.Count + " intersection points between plane and region");
-            return intersections;
+            return intersections.Distinct(Point3DComparer).ToList();
         }
 
         private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model) {
