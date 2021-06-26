@@ -1,9 +1,9 @@
 using System.IO;
 using MathNet.Spatial.Euclidean;
-using AdditiveManufacturing.Geometry;
+using ScaffoldingGenerator.Geometry;
 using System;
 
-namespace AdditiveManufacturing.IO
+namespace ScaffoldingGenerator.IO
 {
     public class StlBinaryWriter : StlWriter
     {

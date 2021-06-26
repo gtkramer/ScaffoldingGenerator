@@ -1,6 +1,6 @@
-using AdditiveManufacturing.Geometry;
+using ScaffoldingGenerator.Geometry;
 
-namespace AdditiveManufacturing.IO
+namespace ScaffoldingGenerator.IO
 {
     public abstract class StlReader
     {

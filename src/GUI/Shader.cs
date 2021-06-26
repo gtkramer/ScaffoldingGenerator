@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using OpenTK.Graphics.OpenGL4;
 
-namespace AdditiveManufacturing.GUI {
+namespace ScaffoldingGenerator.GUI {
     public class Shader : IDisposable
     {
         public int Handle;

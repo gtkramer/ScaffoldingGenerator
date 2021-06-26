@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MathNet.Spatial.Euclidean;
 
-namespace AdditiveManufacturing.DataStructures
+namespace ScaffoldingGenerator.DataStructures
 {
     public class Point3DTree<T>
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace AdditiveManufacturing.Geometry
+namespace ScaffoldingGenerator.Geometry
 {
     public static class FloatTolerance
     {

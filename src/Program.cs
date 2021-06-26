@@ -1,20 +1,20 @@
 using System;
 using CommandLine;
-using AdditiveManufacturing.IO;
-using AdditiveManufacturing.Geometry;
+using ScaffoldingGenerator.IO;
+using ScaffoldingGenerator.Geometry;
 using MathNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;
-using AdditiveManufacturing.DataStructures;
-using AdditiveManufacturing.GUI;
-using AdditiveManufacturing.Extensions;
+using ScaffoldingGenerator.DataStructures;
+using ScaffoldingGenerator.GUI;
+using ScaffoldingGenerator.Extensions;
 using MathNet.Spatial.Units;
 
 /*
 http://www.oldschoolpixels.com/?p=390
 http://grbd.github.io/posts/2016/06/25/gtksharp-part-3-basic-example-with-vs-and-glade/
 */
-namespace AdditiveManufacturing
+namespace ScaffoldingGenerator
 {
     public class Program
     {

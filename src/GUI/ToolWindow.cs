@@ -1,6 +1,6 @@
 using Gtk;
 
-namespace AdditiveManufacturing.GUI
+namespace ScaffoldingGenerator.GUI
 {
     class ToolWindow : Window
     {

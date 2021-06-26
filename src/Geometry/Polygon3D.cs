@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MathNet.Spatial.Euclidean;
 
-namespace AdditiveManufacturing.Geometry
+namespace ScaffoldingGenerator.Geometry
 {
     public class Polygon3D
     {

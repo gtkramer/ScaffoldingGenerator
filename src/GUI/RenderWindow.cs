@@ -5,7 +5,7 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using System.Collections.Generic;
 
-namespace AdditiveManufacturing.GUI
+namespace ScaffoldingGenerator.GUI
 {
     public class RenderWindow : GameWindow
     {
