@@ -5,13 +5,16 @@
             "label": "antlr",
             "command": "antlr4",
             "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/IO"
+            },
             "args": [
                 "-o",
-                "${workspaceFolder}/src/ConsoleApplication/IO",
+                ".",
                 "-Dlanguage=CSharp",
                 "-visitor",
                 "-no-listener",
-                "${workspaceFolder}/src/ConsoleApplication/IO/*.g4"
+                "*.g4"
             ],
             "problemMatcher": "$tsc"
         },
@@ -21,32 +24,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/src/ConsoleApplication/ConsoleApplication.csproj",
+                "${workspaceFolder}/ScaffoldingGenerator.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

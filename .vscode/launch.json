@@ -9,17 +9,11 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/ConsoleApplication/bin/Debug/netcoreapp3.1/ConsoleApplication.dll",
+            "program": "${workspaceFolder}/bin/Debug/net5.0/ScaffoldingGenerator.dll",
             "args": ["--stl-file", "${workspaceFolder}/samples/ascii1.stl", "--ascii"],
-            "cwd": "${workspaceFolder}/src/ConsoleApplication",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
         }
     ]
 }
