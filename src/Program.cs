@@ -53,7 +53,7 @@ namespace ScaffoldingGenerator
         // Pointing in X direction
         private static UnitVector3D YZNormal = UnitVector3D.Create(1, 0, 0);
 
-        private static IEqualityComparer<Point3D> Point3DComparer = new Point3DComparer();
+        private static IEqualityComparer<Point3D> Point3DComparer = new Point3DXComparer();
 
         public class Options
         {
