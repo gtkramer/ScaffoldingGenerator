@@ -367,7 +367,7 @@ namespace ScaffoldingGenerator
 
         private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model) {
             Point3D[] xySortedPoints = intersectionPoints.OrderBy(point => point.X).OrderBy(point => point.Y).ToArray();
-            double xyLength = xySortedPoints[0].ToPoint2D().DistanceTo(xySortedPoints[xySortedPoints.Length - 1].ToPoint2D());
+            double xyLength = xySortedPoints[0].DistanceTo2D(xySortedPoints[xySortedPoints.Length - 1]);
             double xyAvgSegmentLength = xyLength / (xySortedPoints.Length - 1);
 
             double intersectionMinZ = intersectionPoints.OrderBy(points => points.Z).First().Z;
