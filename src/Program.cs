@@ -349,12 +349,9 @@ namespace ScaffoldingGenerator
                             intersections.Add(intersection.Value);
                         }
                     }
-                    catch (InvalidOperationException ioe) {
-                        if (ioe.Message.Equals("Line lies in the plane", StringComparison.OrdinalIgnoreCase)) {
-                            Console.WriteLine("Adding both endpoints of line because line lies in the plane");
-                            intersections.Add(edge.StartPoint);
-                            intersections.Add(edge.EndPoint);
-                        }
+                    catch (InvalidOperationException) {
+                        intersections.Add(edge.StartPoint);
+                        intersections.Add(edge.EndPoint);
                     }
                 }
             }
