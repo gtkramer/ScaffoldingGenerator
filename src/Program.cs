@@ -355,8 +355,9 @@ namespace ScaffoldingGenerator
                     }
                 }
             }
-            Console.WriteLine("Found " + intersections.Count + " intersection points between plane and region");
-            return intersections.Distinct(Point3DComparer).ToList();
+            List<Point3D> uniqueIntersections = intersections.Distinct(Point3DComparer).ToList();
+            Console.WriteLine("Found " + uniqueIntersections.Count + " intersection points between plane and region");
+            return uniqueIntersections;
         }
 
         private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model) {
