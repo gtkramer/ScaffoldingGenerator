@@ -314,7 +314,7 @@ namespace ScaffoldingGenerator
             List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
             foreach (Plane plane in planes) {
                 List<Point3D> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
-                if (intersectionPoints.Count != 0) {
+                if (intersectionPoints.Count >= 2) {
                     intersectionPointSets.Add(intersectionPoints);
                 }
             }
