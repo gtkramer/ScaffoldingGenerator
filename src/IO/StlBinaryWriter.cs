@@ -18,8 +18,7 @@ namespace ScaffoldingGenerator.IO
             {
                 File.Delete(filePath);
             }
-            using (FileStream stream = File.OpenWrite(filePath))
-            using (BinaryWriter writer = new BinaryWriter(stream))
+            using (BinaryWriter writer = new BinaryWriter(File.OpenWrite(filePath)))
             {
                 writer.Write(new byte[80]);
                 writer.Write(facets.Length);

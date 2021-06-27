@@ -10,20 +10,18 @@ namespace ScaffoldingGenerator.IO
         public override Facet[] Read(string filePath)
         {
             int facetCount = GetFacetCount(filePath);
-            using (FileStream stream = File.OpenRead(filePath))
-            using (BinaryReader reader = new BinaryReader(stream))
-            {
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(filePath))) {
                 reader.ReadBytes(84);
                 Facet[] facets = new Facet[facetCount];
-                for (int currFacet = 0; currFacet != facetCount; currFacet++)
+                for (int f = 0; f != facetCount; f++)
                 {
                     Vector3D normal = new Vector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                     Point3D[] vertices = new Point3D[3];
-                    for (int currVertex = 0; currVertex != vertices.Length; currVertex++)
+                    for (int v = 0; v != vertices.Length; v++)
                     {
-                        vertices[currVertex] = new Point3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        vertices[v] = new Point3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                     }
-                    facets[currFacet] = new Facet(normal, vertices);
+                    facets[f] = new Facet(normal, vertices);
                     reader.ReadBytes(2);
                 }
                 return facets;
@@ -36,12 +34,12 @@ namespace ScaffoldingGenerator.IO
             long fileLength = fileInfo.Length;
             if ((fileLength - 84) % 50 != 0)
             {
-                throw new Exception("Corrupt file");
+                throw new InvalidOperationException("Corrupt binary STL file");
             }
             int facetCount = (int)((fileLength - 84) / 50);
             if (facetCount <= 0)
             {
-                throw new Exception("No facets exist");
+                throw new InvalidOperationException("No facets exist in binary STL file");
             }
             return facetCount;
         }
