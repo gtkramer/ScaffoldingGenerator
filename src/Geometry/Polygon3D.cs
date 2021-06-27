@@ -53,11 +53,5 @@ namespace ScaffoldingGenerator.Geometry
             MaxPoint = new Point3D(maxX, maxY, maxZ);
             CenterPoint = Point3D.MidPoint(MinPoint, MaxPoint);
         }
-
-        public bool ContainsPoint(Point3D point) {
-            return point.X >= MinPoint.X && point.X <= MaxPoint.X &&
-            point.Y >= MinPoint.Y && point.Y <= MaxPoint.Y &&
-            point.Z >= MinPoint.Z && point.Z <= MaxPoint.Z;
-        }
     }
 }

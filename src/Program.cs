@@ -322,21 +322,18 @@ namespace ScaffoldingGenerator
             return intersectionPointSets;
         }
 
-        private static List<Plane> GetLineSupportPlanes(Polygon3D region, UnitVector3D supportNormal, double supportSpacing) {
+        private static List<Plane> GetLineSupportPlanes(Polygon3D region, UnitVector3D supportNormal, double supportSpacing)
+        {
             List<Plane> planes = new List<Plane>();
-
             planes.Add(new Plane(supportNormal, region.CenterPoint));
-            int numIntervals = (int)(region.MinPoint.DistanceTo(region.MaxPoint) / supportSpacing / 2) + 1;
-            for (int i = 1; i != numIntervals; i++) {
-                double shift = i * supportSpacing;
+            int numIntervals = (int)(region.MinPoint.DistanceTo2D(region.MaxPoint) / supportSpacing / 2);
+            for (int i = 0; i != numIntervals; i++)
+            {
+                double shift = (i + 1) * supportSpacing;
                 Point3D positivePoint = region.CenterPoint.Move(supportNormal, shift);
-                if (region.ContainsPoint(positivePoint)) {
-                    planes.Add(new Plane(supportNormal, positivePoint));
-                }
                 Point3D negativePoint = region.CenterPoint.Move(supportNormal, -shift);
-                if (region.ContainsPoint(negativePoint)) {
-                    planes.Add(new Plane(supportNormal, negativePoint));
-                }
+                planes.Add(new Plane(supportNormal, positivePoint));
+                planes.Add(new Plane(supportNormal, negativePoint));
             }
             Console.WriteLine("Found " + planes.Count + " planes of support for region");
             return planes;
