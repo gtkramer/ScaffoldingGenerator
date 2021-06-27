@@ -53,7 +53,7 @@ namespace ScaffoldingGenerator
         // Pointing in X direction
         private static UnitVector3D YZNormal = UnitVector3D.Create(1, 0, 0);
 
-        private static IEqualityComparer<Point3D> Point3DComparer = new Point3DXComparer();
+        private static Point3DComparer Point3DComparer = new Point3DXComparer();
 
         public class Options
         {
@@ -360,37 +360,37 @@ namespace ScaffoldingGenerator
             return uniqueIntersections;
         }
 
-        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model) {
-            Point3D[] xySortedPoints = intersectionPoints.OrderBy(point => point.X).OrderBy(point => point.Y).ToArray();
-            double xyLength = xySortedPoints[0].DistanceTo2D(xySortedPoints[xySortedPoints.Length - 1]);
-            double xyAvgSegmentLength = xyLength / (xySortedPoints.Length - 1);
+        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model)
+        {
+            intersectionPoints.Sort(Point3DComparer);
+            double xyLength = intersectionPoints[0].DistanceTo2D(intersectionPoints[intersectionPoints.Count - 1]);
+            double xyAvgSegmentLength = xyLength / (intersectionPoints.Count - 1);
 
-            double intersectionMinZ = intersectionPoints.OrderBy(points => points.Z).First().Z;
-            Console.WriteLine("Intersection min Z:" + intersectionMinZ);
-            double intersectionMaxZ = intersectionPoints.OrderBy(points => points.Z).Last().Z;
-            Console.WriteLine("Intersection max Z:" + intersectionMaxZ);
             double buildPlateZ = model.MinPoint.Z - plateSpacing;
-            double zMinLength = intersectionMinZ - buildPlateZ;
-
-            int numRows = 2;
-            int numCols = xySortedPoints.Length;
+            double zSegmentCountSum = 0;
+            foreach (Point3D intersection in intersectionPoints) {
+                zSegmentCountSum += Math.Abs(intersection.Z - buildPlateZ) / xyAvgSegmentLength;
+            }
+            int zAvgSegmentCount = (int)(zSegmentCountSum / intersectionPoints.Count);
+            int numRows = zAvgSegmentCount + 2;
+            int numCols = intersectionPoints.Count;
             Point3D[,] pointGrid = new Point3D[numRows, numCols];
-            for (int row = 0; row != numRows; row++) {
-                for (int col = 0; col != numCols; col++) {
-                    Point3D referencePoint = xySortedPoints[col];
-                    if (row == 0) {
-                        pointGrid[row, col] = referencePoint;
-                    }
-                    else if (row == 1) {
-                        pointGrid[row, col] = new Point3D(referencePoint.X, referencePoint.Y, buildPlateZ);
-                    }
+            for (int row = 0; row != numRows; row++)
+            {
+                for (int col = 0; col != numCols; col++)
+                {
+                    Point3D referencePoint = intersectionPoints[col];
+                    double newZ = referencePoint.Z - Math.Abs(referencePoint.Z - buildPlateZ) / (numRows - 1) * row;
+                    pointGrid[row, col] = new Point3D(referencePoint.X, referencePoint.Y, newZ);
                 }
             }
             Console.WriteLine("Filled grid of points");
 
             List<Facet> scaffoldingFacets = new List<Facet>();
-            for (int row = 0; row != numRows - 1; row++) {
-                for (int col = 0; col != numCols - 1; col++) {
+            for (int row = 0; row != numRows - 1; row++)
+            {
+                for (int col = 0; col != numCols - 1; col++)
+                {
                     Point3D p1 = pointGrid[row + 1, col + 1];
                     Point3D p2 = pointGrid[row + 1, col];
                     Point3D p3 = pointGrid[row, col];
