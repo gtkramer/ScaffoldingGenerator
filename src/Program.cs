@@ -2,13 +2,11 @@ using System;
 using CommandLine;
 using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;
 using ScaffoldingGenerator.DataStructures;
 using ScaffoldingGenerator.GUI;
-using ScaffoldingGenerator.Extensions;
-using MathNet.Spatial.Units;
 
 /*
 http://www.oldschoolpixels.com/?p=390
@@ -47,11 +45,11 @@ namespace ScaffoldingGenerator
         }
 
         // Pointing in Z direction
-        private static UnitVector3D XYNormal = UnitVector3D.Create(0, 0, 1);
+        private static Vector3D XYNormal = new Vector3D(0, 0, 1);
         // Pointing in Y direction
-        private static UnitVector3D XZNormal = UnitVector3D.Create(0, 1, 0);
+        private static Vector3D XZNormal = new Vector3D(2, 1, 0);
         // Pointing in X direction
-        private static UnitVector3D YZNormal = UnitVector3D.Create(1, 0, 0);
+        private static Vector3D YZNormal = new Vector3D(1, -2, 0);
 
         private static Point3DComparer Point3DComparer = new Point3DXComparer();
 
@@ -111,23 +109,23 @@ namespace ScaffoldingGenerator
 
                 List<Facet> scaffoldingFacets = new List<Facet>();
                 if (opts.DoXScaffolding || opts.DoYScaffolding) {
-                    List<UnitVector3D> supportNormals = new List<UnitVector3D>();
-                    Angle scaffoldingAngle = Angle.FromDegrees(opts.ScaffoldingAngle);
+                    List<Vector3D> supportNormals = new List<Vector3D>();
+                    // FIXME TODO Add rotation of normal
                     if (opts.DoXScaffolding) {
-                        supportNormals.Add(YZNormal.Rotate(XYNormal, scaffoldingAngle));
+                        supportNormals.Add(YZNormal);
                     }
                     if (opts.DoYScaffolding) {
-                        supportNormals.Add(XZNormal.Rotate(XYNormal, scaffoldingAngle));
+                        supportNormals.Add(XZNormal);
                     }
                     Console.WriteLine("Made support normals");
-                    foreach (UnitVector3D supportNormal in supportNormals) {
-                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, opts.SupportSpacing, opts.PlateSpacing));
+                    foreach (Vector3D supportNormal in supportNormals) {
+                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)opts.SupportSpacing, (float)opts.PlateSpacing));
                     }
                 }
                 // if (opts.DoContourScaffolding) {
                 //     scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, opts.PlateSpacing);
                 // }
-                StlAsciiWriter writer = new StlAsciiWriter();
+                StlBinaryWriter writer = new StlBinaryWriter();
                 writer.Write("out.stl", scaffoldingFacets.ToArray());
             }
             catch (Exception ex)
@@ -153,7 +151,7 @@ namespace ScaffoldingGenerator
 
         private static bool DoesFacetNeedSupported(Facet facet, double criticalAngle)
         {
-            return facet.Normal.AngleTo(XYNormal).Degrees > 180 - criticalAngle;
+            return facet.Normal.AngleTo(XYNormal) > 180 - criticalAngle;
         }
 
         private static Point3D[] GetEdgeFacetKeys(Facet[] facets)
@@ -163,7 +161,7 @@ namespace ScaffoldingGenerator
             {
                 keys.AddRange(facet.EdgeMidPoints);
             }
-            return keys.Distinct(Point3DComparer).ToArray();
+            return keys.Distinct().ToArray();
         }
 
         private static void CreateEdgeFacetAssociation(Facet[] facets, Point3DTree<List<Facet>> edgeFacetIndex)
@@ -255,7 +253,7 @@ namespace ScaffoldingGenerator
                 for (int j = i; j != largeDiagonals.Count && !isLargeRegion; j++)
                 {
                     Vector3D diagonal2 = largeDiagonals[j];
-                    double angleBetween = diagonal1.AngleTo(diagonal2).Degrees;
+                    double angleBetween = diagonal1.AngleTo(diagonal2);
                     if (angleBetween >= 90 - toleranceAngle && angleBetween <= 90 + toleranceAngle) {
                         isLargeRegion = true;
                     }
@@ -297,7 +295,7 @@ namespace ScaffoldingGenerator
             return diagonals;
         }
 
-        private static List<Facet> GenerateLineScaffolding(Polygon3D model, List<Polygon3D> regions, UnitVector3D supportNormal, double supportSpacing, double plateSpacing) {
+        private static List<Facet> GenerateLineScaffolding(Polygon3D model, List<Polygon3D> regions, Vector3D supportNormal, float supportSpacing, float plateSpacing) {
             List<Facet> scaffolding = new List<Facet>();
             foreach (Polygon3D region in regions) {
                 foreach (List<Point3D> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
@@ -308,7 +306,7 @@ namespace ScaffoldingGenerator
             return scaffolding;
         }
 
-        private static List<List<Point3D>> GetLineSupportIntersections(Polygon3D region, UnitVector3D supportNormal, double supportSpacing) {
+        private static List<List<Point3D>> GetLineSupportIntersections(Polygon3D region, Vector3D supportNormal, float supportSpacing) {
             List<List<Point3D>> intersectionPointSets = new List<List<Point3D>>();
 
             List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
@@ -322,14 +320,14 @@ namespace ScaffoldingGenerator
             return intersectionPointSets;
         }
 
-        private static List<Plane> GetLineSupportPlanes(Polygon3D region, UnitVector3D supportNormal, double supportSpacing)
+        private static List<Plane> GetLineSupportPlanes(Polygon3D region, Vector3D supportNormal, float supportSpacing)
         {
             List<Plane> planes = new List<Plane>();
             planes.Add(new Plane(supportNormal, region.CenterPoint));
-            int numIntervals = (int)(region.MinPoint.DistanceTo2D(region.MaxPoint) / supportSpacing / 2);
+            int numIntervals = (int)(region.MinPoint.DistanceTo(region.MaxPoint) / supportSpacing / 2);
             for (int i = 0; i != numIntervals; i++)
             {
-                double shift = (i + 1) * supportSpacing;
+                float shift = (i + 1) * supportSpacing;
                 Point3D positivePoint = region.CenterPoint.Move(supportNormal, shift);
                 Point3D negativePoint = region.CenterPoint.Move(supportNormal, -shift);
                 planes.Add(new Plane(supportNormal, positivePoint));
@@ -344,9 +342,9 @@ namespace ScaffoldingGenerator
             foreach (Facet facet in region.Facets) {
                 foreach (Line3D edge in facet.Edges) {
                     try {
-                        Point3D? intersection = support.IntersectionWith(edge);
-                        if (intersection.HasValue) {
-                            intersections.Add(intersection.Value);
+                        Point3D? intersection = support.GetIntersectionPoint(edge);
+                        if (!object.ReferenceEquals(intersection, null)) {
+                            intersections.Add(intersection);
                         }
                     }
                     catch (InvalidOperationException) {
@@ -355,15 +353,15 @@ namespace ScaffoldingGenerator
                     }
                 }
             }
-            List<Point3D> uniqueIntersections = intersections.Distinct(Point3DComparer).ToList();
+            List<Point3D> uniqueIntersections = intersections.Distinct().ToList();
             Console.WriteLine("Found " + uniqueIntersections.Count + " intersection points between plane and region");
             return uniqueIntersections;
         }
 
-        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, UnitVector3D supportNormal, double plateSpacing, Polygon3D model)
+        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, Vector3D supportNormal, double plateSpacing, Polygon3D model)
         {
-            intersectionPoints.Sort(Point3DComparer);
-            double xyLength = intersectionPoints[0].DistanceTo2D(intersectionPoints[intersectionPoints.Count - 1]);
+            intersectionPoints.Sort(new Point3DXComparer());
+            double xyLength = intersectionPoints[0].DistanceTo(intersectionPoints[intersectionPoints.Count - 1]);
             double xyAvgSegmentLength = xyLength / (intersectionPoints.Count - 1);
 
             double buildPlateZ = model.MinPoint.Z - plateSpacing;
@@ -380,7 +378,7 @@ namespace ScaffoldingGenerator
                 for (int col = 0; col != numCols; col++)
                 {
                     Point3D referencePoint = intersectionPoints[col];
-                    double newZ = referencePoint.Z - Math.Abs(referencePoint.Z - buildPlateZ) / (numRows - 1) * row;
+                    float newZ = (float)(referencePoint.Z - Math.Abs(referencePoint.Z - buildPlateZ) / (numRows - 1) * row);
                     pointGrid[row, col] = new Point3D(referencePoint.X, referencePoint.Y, newZ);
                 }
             }
@@ -391,6 +389,7 @@ namespace ScaffoldingGenerator
             {
                 for (int col = 0; col != numCols - 1; col++)
                 {
+                    //Console.WriteLine($"Row {row}, Col {col}");
                     Point3D p1 = pointGrid[row + 1, col + 1];
                     Point3D p2 = pointGrid[row + 1, col];
                     Point3D p3 = pointGrid[row, col];
@@ -405,12 +404,12 @@ namespace ScaffoldingGenerator
         }
 
         private static Facet TesselatePoints(Point3D v1, Point3D v2, Point3D v3) {
-            Vector3D AB = v1.VectorTo(v2);
-            Console.WriteLine("Created vector u from " + v1 + " and " + v2);
-            Vector3D AC = v1.VectorTo(v3);
-            Console.WriteLine("Created vector v from " + v1 + " and " + v3);
+            Vector3D AB = v2 - v1;
+            //Console.WriteLine("Created vector u from " + v1 + " and " + v2);
+            Vector3D AC = v3 - v1;
+            //Console.WriteLine("Created vector v from " + v1 + " and " + v3);
             Vector3D normal = AB.CrossProduct(AC);
-            Console.WriteLine("Tesselated a facet");
+            //Console.WriteLine("Tesselated a facet");
             return new Facet(normal, new Point3D[]{v1, v2, v3});
         }
     }

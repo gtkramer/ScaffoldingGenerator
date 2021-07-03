@@ -1,19 +1,9 @@
 using System.Collections.Generic;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.DataStructures
 {
-    public abstract class Point3DComparer : IComparer<Point3D>, IEqualityComparer<Point3D> {
-        public bool Equals(Point3D a, Point3D b)
-        {
-            return Compare(a, b) == 0;
-        }
-
-        public int GetHashCode(Point3D p)
-        {
-            return p.GetHashCode();
-        }
-
+    public abstract class Point3DComparer : IComparer<Point3D> {
         public abstract int Compare(Point3D a, Point3D b);
     }
 

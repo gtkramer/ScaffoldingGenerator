@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using ScaffoldingGenerator.Geometry;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.IO
 {

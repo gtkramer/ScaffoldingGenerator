@@ -1,4 +1,4 @@
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 using System.Linq;
 
 namespace ScaffoldingGenerator.Geometry

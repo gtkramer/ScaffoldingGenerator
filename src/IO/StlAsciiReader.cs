@@ -3,7 +3,7 @@ using System.IO;
 using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
 using Antlr4.Runtime;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 using System.Linq;
 
 public class StlAsciiReader : StlReader
@@ -47,8 +47,7 @@ public class StlAsciiReader : StlReader
     {
         public override Vector3D VisitNormal(StlAsciiParser.NormalContext context)
         {
-            float[] floats = context.FLOAT().Select((x) => float.Parse(x.GetText())).ToArray();
-            return new Vector3D(floats[0], floats[1], floats[2]);
+            return new Vector3D(context.FLOAT().Select((x) => float.Parse(x.GetText())));
         }
     }
 
@@ -65,8 +64,7 @@ public class StlAsciiReader : StlReader
     {
         public override Point3D VisitVertex(StlAsciiParser.VertexContext context)
         {
-            float[] floats = context.FLOAT().Select((x) => float.Parse(x.GetText())).ToArray();
-            return new Point3D(floats[0], floats[1], floats[2]);
+            return new Point3D(context.FLOAT().Select((x) => float.Parse(x.GetText())));
         }
     }
 }

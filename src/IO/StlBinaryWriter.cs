@@ -1,5 +1,5 @@
 using System.IO;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 using ScaffoldingGenerator.Geometry;
 using System;
 
@@ -25,14 +25,14 @@ namespace ScaffoldingGenerator.IO
                 foreach (Facet facet in facets)
                 {
                     Vector3D normal = facet.Normal;
-                    writer.Write((float)normal.X);
-                    writer.Write((float)normal.Y);
-                    writer.Write((float)normal.Z);
+                    writer.Write(normal.X);
+                    writer.Write(normal.Y);
+                    writer.Write(normal.Z);
                     foreach (Point3D vertex in facet.Vertices)
                     {
-                        writer.Write((float)vertex.X);
-                        writer.Write((float)vertex.Y);
-                        writer.Write((float)vertex.Z);
+                        writer.Write(vertex.X);
+                        writer.Write(vertex.Y);
+                        writer.Write(vertex.Z);
                     }
                     writer.Write(new byte[2]);
                 }

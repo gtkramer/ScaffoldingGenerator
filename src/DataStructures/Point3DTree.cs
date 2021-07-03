@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.DataStructures
 {

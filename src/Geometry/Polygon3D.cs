@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using MathNet.Spatial.Euclidean;
+using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.Geometry
 {
@@ -14,10 +14,10 @@ namespace ScaffoldingGenerator.Geometry
         {
             Facets = facets;
 
-            double minX, minY, minZ;
-            double maxX, maxY, maxZ;
-            minX = minY = minZ = double.MaxValue;
-            maxX = maxY = maxZ = double.MinValue;
+            float minX, minY, minZ;
+            float maxX, maxY, maxZ;
+            minX = minY = minZ = float.MaxValue;
+            maxX = maxY = maxZ = float.MinValue;
             foreach (Facet facet in facets)
             {
                 foreach (Point3D vertex in facet.Vertices)
