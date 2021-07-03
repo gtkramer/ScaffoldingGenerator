@@ -340,7 +340,7 @@ namespace ScaffoldingGenerator
         private static List<Point3D> GetLineScaffoldingIntersections(Polygon3D region, Plane support) {
             List<Point3D> intersections = new List<Point3D>();
             foreach (Facet facet in region.Facets) {
-                foreach (Line3D edge in facet.Edges) {
+                foreach (LineSegment3D edge in facet.Edges) {
                     try {
                         Point3D? intersection = support.GetIntersectionPoint(edge);
                         if (!object.ReferenceEquals(intersection, null)) {

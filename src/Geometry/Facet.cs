@@ -8,7 +8,7 @@ namespace ScaffoldingGenerator.Geometry
         public Vector3D Normal;
         public Point3D[] Vertices;
         public Point3D Centroid;
-        public Line3D[] Edges;
+        public LineSegment3D[] Edges;
         public Point3D[] EdgeMidPoints;
 
         public Facet(Vector3D normal, Point3D[] vertices)
@@ -16,11 +16,11 @@ namespace ScaffoldingGenerator.Geometry
             Normal = normal;
             Vertices = vertices;
             Centroid = new Point3D(vertices.Sum(vertex => vertex.X) / vertices.Length, vertices.Sum(vertex => vertex.Y) / vertices.Length, vertices.Sum(vertex => vertex.Z) / vertices.Length);
-            Edges = new Line3D[vertices.Length];
+            Edges = new LineSegment3D[vertices.Length];
             EdgeMidPoints = new Point3D[Edges.Length];
             for (int i = 0; i < Edges.Length; i++)
             {
-                Edges[i] = i + 1 < Edges.Length ? new Line3D(vertices[i], vertices[i + 1]) : new Line3D(vertices[i], vertices[0]);
+                Edges[i] = i + 1 < Edges.Length ? new LineSegment3D(vertices[i], vertices[i + 1]) : new LineSegment3D(vertices[i], vertices[0]);
                 EdgeMidPoints[i] = Point3D.MidPoint(Edges[i].StartPoint, Edges[i].EndPoint);
             }
         }

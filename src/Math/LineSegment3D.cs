@@ -1,10 +1,10 @@
 namespace CalcNet.Spatial.Euclidean {
-    public class Line3D {
+    public class LineSegment3D {
 
         public Point3D StartPoint { get; }
         public Point3D EndPoint { get; }
 
-        public Line3D(Point3D startPoint, Point3D endPoint) {
+        public LineSegment3D(Point3D startPoint, Point3D endPoint) {
             this.StartPoint = startPoint;
             this.EndPoint = endPoint;
         }
