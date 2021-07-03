@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using OpenTK.Mathematics;
 
-namespace CalcNet.Spatial.Euclidean {
+namespace ScaffoldingGenerator.Geometry {
     public class Point3 : IEquatable<Point3>, IEqualityComparer<Point3> {
 
         public float X { get; }

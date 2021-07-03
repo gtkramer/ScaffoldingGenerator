@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using ScaffoldingGenerator.Geometry;
-using CalcNet.Spatial.Euclidean;
 using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.IO

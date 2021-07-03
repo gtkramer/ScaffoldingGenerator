@@ -1,5 +1,6 @@
 using System;
-namespace CalcNet.Spatial.Euclidean {
+
+namespace ScaffoldingGenerator.Geometry {
     public static class AngleConverter {
         public static float RadToDeg(float radians) {
             return radians * 180 / MathF.PI;

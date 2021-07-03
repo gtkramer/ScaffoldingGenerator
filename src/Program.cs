@@ -2,7 +2,6 @@ using System;
 using CommandLine;
 using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
-using CalcNet.Spatial.Euclidean;
 using System.Collections.Generic;
 using System.Linq;
 using ScaffoldingGenerator.DataStructures;

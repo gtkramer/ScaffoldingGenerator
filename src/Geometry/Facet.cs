@@ -1,4 +1,3 @@
-using CalcNet.Spatial.Euclidean;
 using System.Linq;
 using OpenTK.Mathematics;
 

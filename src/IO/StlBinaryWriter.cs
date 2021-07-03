@@ -1,5 +1,4 @@
 using System.IO;
-using CalcNet.Spatial.Euclidean;
 using ScaffoldingGenerator.Geometry;
 using System;
 using OpenTK.Mathematics;

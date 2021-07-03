@@ -3,7 +3,6 @@ using System.IO;
 using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
 using Antlr4.Runtime;
-using CalcNet.Spatial.Euclidean;
 using System.Linq;
 using OpenTK.Mathematics;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 using OpenTK.Mathematics;
 
-namespace CalcNet.Spatial.Euclidean
+namespace ScaffoldingGenerator.Geometry
 {
     public class Plane
     {

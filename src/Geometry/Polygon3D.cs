@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.Geometry
 {
