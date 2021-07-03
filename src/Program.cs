@@ -51,7 +51,7 @@ namespace ScaffoldingGenerator
         // Pointing in X direction
         private static Vector3 YZNormal = new Vector3(1, 0, 0);
 
-        private static Point3DComparer Point3DComparer = new Point3DXComparer();
+        private static Point3Comparer Point3DComparer = new Point3XComparer();
 
         public class Options
         {
@@ -95,7 +95,7 @@ namespace ScaffoldingGenerator
                 Polygon3[] unsupportedFacets = model.Facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
                 Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
 
-                Point3DTree<List<Polygon3>> edgeFacetIndex = new Point3DTree<List<Polygon3>>(GetEdgeFacetKeys(unsupportedFacets));
+                Point3Tree<List<Polygon3>> edgeFacetIndex = new Point3Tree<List<Polygon3>>(GetEdgeFacetKeys(unsupportedFacets));
                 Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
 
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
@@ -164,7 +164,7 @@ namespace ScaffoldingGenerator
             return keys.Distinct().ToArray();
         }
 
-        private static void CreateEdgeFacetAssociation(Polygon3[] facets, Point3DTree<List<Polygon3>> edgeFacetIndex)
+        private static void CreateEdgeFacetAssociation(Polygon3[] facets, Point3Tree<List<Polygon3>> edgeFacetIndex)
         {
             foreach (Polygon3 facet in facets)
             {
@@ -185,9 +185,9 @@ namespace ScaffoldingGenerator
             }
         }
 
-        private static List<Mesh3> BuildUnsupportedRegions(Polygon3[] unsupportedFacets, Point3DTree<List<Polygon3>> edgeFacetIndex)
+        private static List<Mesh3> BuildUnsupportedRegions(Polygon3[] unsupportedFacets, Point3Tree<List<Polygon3>> edgeFacetIndex)
         {
-            Point3DTree<bool> facetVisitedIndex = new Point3DTree<bool>(unsupportedFacets.Select(facet => facet.Centroid).ToArray());
+            Point3Tree<bool> facetVisitedIndex = new Point3Tree<bool>(unsupportedFacets.Select(facet => facet.Centroid).ToArray());
             List<Mesh3> unsupportedRegions = new List<Mesh3>();
             foreach (Polygon3 unsupportedFacet in unsupportedFacets)
             {
@@ -199,7 +199,7 @@ namespace ScaffoldingGenerator
             return unsupportedRegions;
         }
 
-        private static Polygon3[] GrowUnsupportedRegion(Polygon3 unsupportedFacet, Point3DTree<List<Polygon3>> edgeFacetIndex, Point3DTree<bool> facetVisitedIndex)
+        private static Polygon3[] GrowUnsupportedRegion(Polygon3 unsupportedFacet, Point3Tree<List<Polygon3>> edgeFacetIndex, Point3Tree<bool> facetVisitedIndex)
         {
             Queue<Polygon3> adjacentQueue = new Queue<Polygon3>();
             adjacentQueue.Enqueue(unsupportedFacet);
@@ -215,7 +215,7 @@ namespace ScaffoldingGenerator
             return unsupportedRegion.ToArray();
         }
 
-        private static void EnqueueAdjacentFacets(Polygon3 adjacentFacet, Queue<Polygon3> adjacentQueue, Point3DTree<List<Polygon3>> edgeFacetIndex, Point3DTree<bool> facetVisitedIndex)
+        private static void EnqueueAdjacentFacets(Polygon3 adjacentFacet, Queue<Polygon3> adjacentQueue, Point3Tree<List<Polygon3>> edgeFacetIndex, Point3Tree<bool> facetVisitedIndex)
         {
             foreach (Polygon3 facet in GetAdjacentFacets(adjacentFacet, edgeFacetIndex))
             {
@@ -227,7 +227,7 @@ namespace ScaffoldingGenerator
             }
         }
 
-        private static List<Polygon3> GetAdjacentFacets(Polygon3 facet, Point3DTree<List<Polygon3>> edgeFacetIndex)
+        private static List<Polygon3> GetAdjacentFacets(Polygon3 facet, Point3Tree<List<Polygon3>> edgeFacetIndex)
         {
             List<Polygon3> adjacentFacets = new List<Polygon3>(3);
             foreach (Point3 edgeMidPoint in facet.EdgeMidPoints)
@@ -243,7 +243,7 @@ namespace ScaffoldingGenerator
             return adjacentFacets;
         }
 
-        private static bool IsLargeRegion(Mesh3 region, Point3DTree<List<Polygon3>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
+        private static bool IsLargeRegion(Mesh3 region, Point3Tree<List<Polygon3>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
         {
             bool isLargeRegion = false;
             List<Vector3> largeDiagonals = GetLargeDiagonals(GetBoundingVertices(region, edgeFacetIndex), dimensionLength);
@@ -262,7 +262,7 @@ namespace ScaffoldingGenerator
             return isLargeRegion;
         }
 
-        private static List<Point3> GetBoundingVertices(Mesh3 region, Point3DTree<List<Polygon3>> edgeFacetIndex)
+        private static List<Point3> GetBoundingVertices(Mesh3 region, Point3Tree<List<Polygon3>> edgeFacetIndex)
         {
             List<Point3> boundingVertices = new List<Point3>();
             foreach (Polygon3 facet in region.Facets)
@@ -360,7 +360,7 @@ namespace ScaffoldingGenerator
 
         private static IEnumerable<Polygon3> CreateTesselatedLineSupport(List<Point3> intersectionPoints, Vector3 supportNormal, double plateSpacing, Mesh3 model)
         {
-            intersectionPoints.Sort(new Point3DXComparer());
+            intersectionPoints.Sort(new Point3XComparer());
             double xyLength = intersectionPoints[0].DistanceTo(intersectionPoints[intersectionPoints.Count - 1]);
             double xyAvgSegmentLength = xyLength / (intersectionPoints.Count - 1);
 

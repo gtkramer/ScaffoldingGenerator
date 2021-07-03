@@ -3,11 +3,11 @@ using ScaffoldingGenerator.Geometry;
 
 namespace ScaffoldingGenerator.DataStructures
 {
-    public abstract class Point3DComparer : IComparer<Point3> {
+    public abstract class Point3Comparer : IComparer<Point3> {
         public abstract int Compare(Point3 a, Point3 b);
     }
 
-    public class Point3DXComparer : Point3DComparer
+    public class Point3XComparer : Point3Comparer
     {
         public override int Compare(Point3 a, Point3 b)
         {
@@ -48,7 +48,7 @@ namespace ScaffoldingGenerator.DataStructures
         }
     }
 
-    public class Point3DYComparer : Point3DComparer
+    public class Point3YComparer : Point3Comparer
     {
         public override int Compare(Point3 a, Point3 b)
         {
@@ -89,7 +89,7 @@ namespace ScaffoldingGenerator.DataStructures
         }
     }
 
-    public class Point3DZComparer : Point3DComparer
+    public class Point3ZComparer : Point3Comparer
     {
         public override int Compare(Point3 a, Point3 b)
         {

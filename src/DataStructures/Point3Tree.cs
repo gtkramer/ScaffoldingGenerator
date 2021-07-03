@@ -4,13 +4,13 @@ using ScaffoldingGenerator.Geometry;
 
 namespace ScaffoldingGenerator.DataStructures
 {
-    public class Point3DTree<T>
+    public class Point3Tree<T>
     {
-        private static IComparer<Point3>[] CoordComparers = { new Point3DXComparer(), new Point3DYComparer(), new Point3DZComparer() };
+        private static IComparer<Point3>[] CoordComparers = { new Point3XComparer(), new Point3YComparer(), new Point3ZComparer() };
         public Point3[] Keys;
         public T[] Values;
 
-        public Point3DTree(Point3[] keys)
+        public Point3Tree(Point3[] keys)
         {
             Keys = keys;
             Values = new T[Keys.Length];
