@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using OpenTK.Mathematics;
 
 namespace CalcNet.Spatial.Euclidean {
     public class Point3D : IEquatable<Point3D>, IEqualityComparer<Point3D> {
@@ -25,16 +26,16 @@ namespace CalcNet.Spatial.Euclidean {
             this.Z = enumerator.Current;
         }
 
-        public static Point3D operator +(Point3D point, Vector3D vector) {
+        public static Point3D operator +(Point3D point, Vector3 vector) {
             return new Point3D(point.X + vector.X, point.Y + vector.Y, point.Z + vector.Z);
         }
 
-        public static Point3D operator -(Point3D point, Vector3D vector) {
+        public static Point3D operator -(Point3D point, Vector3 vector) {
             return new Point3D(point.X - vector.X, point.Y - vector.Y, point.Z - vector.Z);
         }
 
-        public static Vector3D operator -(Point3D left, Point3D right) {
-            return new Vector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+        public static Vector3 operator -(Point3D left, Point3D right) {
+            return new Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
         }
 
         public static bool operator ==(Point3D left, Point3D right) {
@@ -45,7 +46,7 @@ namespace CalcNet.Spatial.Euclidean {
             return !left.Equals(right);
         }
 
-        public Point3D Move(Vector3D m, float t) {
+        public Point3D Move(Vector3 m, float t) {
             return this + t * m;
         }
 
@@ -54,7 +55,7 @@ namespace CalcNet.Spatial.Euclidean {
         }
 
         public float DistanceTo(Point3D point) {
-            return (this - point).Magnitude();
+            return (this - point).Length;
         }
 
         public bool Equals(Point3D? other)

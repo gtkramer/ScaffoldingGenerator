@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ScaffoldingGenerator.Geometry;
 using CalcNet.Spatial.Euclidean;
+using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.IO
 {
@@ -15,7 +16,7 @@ namespace ScaffoldingGenerator.IO
                 Facet[] facets = new Facet[facetCount];
                 for (int f = 0; f != facetCount; f++)
                 {
-                    Vector3D normal = new Vector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Vector3 normal = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                     Point3D[] vertices = new Point3D[3];
                     for (int v = 0; v != vertices.Length; v++)
                     {

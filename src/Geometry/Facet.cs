@@ -1,17 +1,18 @@
 using CalcNet.Spatial.Euclidean;
 using System.Linq;
+using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.Geometry
 {
     public class Facet
     {
-        public Vector3D Normal;
+        public Vector3 Normal;
         public Point3D[] Vertices;
         public Point3D Centroid;
         public LineSegment3D[] Edges;
         public Point3D[] EdgeMidPoints;
 
-        public Facet(Vector3D normal, Point3D[] vertices)
+        public Facet(Vector3 normal, Point3D[] vertices)
         {
             Normal = normal;
             Vertices = vertices;

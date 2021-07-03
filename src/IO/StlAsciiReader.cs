@@ -5,6 +5,8 @@ using ScaffoldingGenerator.Geometry;
 using Antlr4.Runtime;
 using CalcNet.Spatial.Euclidean;
 using System.Linq;
+using OpenTK.Mathematics;
+using System.Collections.Generic;
 
 public class StlAsciiReader : StlReader
 {
@@ -43,11 +45,19 @@ public class StlAsciiReader : StlReader
         }
     }
 
-    private class NormalVisitor : StlAsciiBaseVisitor<Vector3D>
+    private class NormalVisitor : StlAsciiBaseVisitor<Vector3>
     {
-        public override Vector3D VisitNormal(StlAsciiParser.NormalContext context)
+        public override Vector3 VisitNormal(StlAsciiParser.NormalContext context)
         {
-            return new Vector3D(context.FLOAT().Select((x) => float.Parse(x.GetText())));
+            IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
+            IEnumerator<float> enumerator = parsed.GetEnumerator();
+            enumerator.MoveNext();
+            float x = enumerator.Current;
+            enumerator.MoveNext();
+            float y = enumerator.Current;
+            enumerator.MoveNext();
+            float z = enumerator.Current;
+            return new Vector3(x, y, z);
         }
     }
 

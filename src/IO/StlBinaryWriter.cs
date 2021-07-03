@@ -2,6 +2,7 @@ using System.IO;
 using CalcNet.Spatial.Euclidean;
 using ScaffoldingGenerator.Geometry;
 using System;
+using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.IO
 {
@@ -24,7 +25,7 @@ namespace ScaffoldingGenerator.IO
                 writer.Write(facets.Length);
                 foreach (Facet facet in facets)
                 {
-                    Vector3D normal = facet.Normal;
+                    Vector3 normal = facet.Normal;
                     writer.Write(normal.X);
                     writer.Write(normal.Y);
                     writer.Write(normal.Z);

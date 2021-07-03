@@ -1,3 +1,5 @@
+using OpenTK.Mathematics;
+
 namespace CalcNet.Spatial.Euclidean {
     public class LineSegment3D {
 
@@ -9,7 +11,7 @@ namespace CalcNet.Spatial.Euclidean {
             this.EndPoint = endPoint;
         }
 
-        public Vector3D ToVector3D() {
+        public Vector3 ToVector3() {
             return this.EndPoint - this.StartPoint;
         }
     }
