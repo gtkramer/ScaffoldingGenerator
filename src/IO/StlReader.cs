@@ -4,6 +4,6 @@ namespace ScaffoldingGenerator.IO
 {
     public abstract class StlReader
     {
-        public abstract Facet[] Read(string filePath);
+        public abstract Polygon3[] Read(string filePath);
     }
 }

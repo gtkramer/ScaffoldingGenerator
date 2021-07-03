@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 public class StlAsciiReader : StlReader
 {
-    public override Facet[] Read(string filePath)
+    public override Polygon3[] Read(string filePath)
     {
         string fileContents = File.ReadAllText(filePath);
         AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
@@ -17,7 +17,7 @@ public class StlAsciiReader : StlReader
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         StlAsciiParser parser = new StlAsciiParser(tokenStream);
         SolidVisitor visitor = new SolidVisitor();
-        Facet[] facets = visitor.Visit(parser.solid());
+        Polygon3[] facets = visitor.Visit(parser.solid());
         if (parser.NumberOfSyntaxErrors != 0)
         {
             throw new Exception("Corrupt file");
@@ -25,22 +25,22 @@ public class StlAsciiReader : StlReader
         return facets;
     }
 
-    private class SolidVisitor : StlAsciiBaseVisitor<Facet[]>
+    private class SolidVisitor : StlAsciiBaseVisitor<Polygon3[]>
     {
-        public override Facet[] VisitSolid(StlAsciiParser.SolidContext context)
+        public override Polygon3[] VisitSolid(StlAsciiParser.SolidContext context)
         {
             FacetVisitor facetVisitor = new FacetVisitor();
             return context.facet().Select((x) => facetVisitor.VisitFacet(x)).ToArray();
         }
     }
 
-    private class FacetVisitor : StlAsciiBaseVisitor<Facet>
+    private class FacetVisitor : StlAsciiBaseVisitor<Polygon3>
     {
-        public override Facet VisitFacet(StlAsciiParser.FacetContext context)
+        public override Polygon3 VisitFacet(StlAsciiParser.FacetContext context)
         {
             NormalVisitor normalVisitor = new NormalVisitor();
             LoopVisitor loopVisitor = new LoopVisitor();
-            return new Facet(normalVisitor.VisitNormal(context.normal()), loopVisitor.VisitLoop(context.loop()));
+            return new Polygon3(normalVisitor.VisitNormal(context.normal()), loopVisitor.VisitLoop(context.loop()));
         }
     }
 

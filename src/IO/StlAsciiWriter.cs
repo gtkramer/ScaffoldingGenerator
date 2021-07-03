@@ -7,7 +7,7 @@ namespace ScaffoldingGenerator.IO
 {
     public class StlAsciiWriter : StlWriter
     {
-        public override void Write(string filePath, Facet[] facets)
+        public override void Write(string filePath, Polygon3[] facets)
         {
             if (facets.Length == 0)
             {
@@ -23,7 +23,7 @@ namespace ScaffoldingGenerator.IO
             {
                 string name = "object";
                 writer.Write("solid " + name + "\n");
-                foreach (Facet facet in facets)
+                foreach (Polygon3 facet in facets)
                 {
                     Vector3 normal = facet.Normal;
                     writer.Write("\t" + "facet normal " + normal.X + " " + normal.Y + " " + normal.Z + "\n");

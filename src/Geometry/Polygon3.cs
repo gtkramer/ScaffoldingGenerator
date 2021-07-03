@@ -3,7 +3,7 @@ using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.Geometry
 {
-    public class Facet
+    public class Polygon3
     {
         public Vector3 Normal;
         public Point3[] Vertices;
@@ -11,7 +11,7 @@ namespace ScaffoldingGenerator.Geometry
         public LineSegment3[] Edges;
         public Point3[] EdgeMidPoints;
 
-        public Facet(Vector3 normal, Point3[] vertices)
+        public Polygon3(Vector3 normal, Point3[] vertices)
         {
             Normal = normal;
             Vertices = vertices;

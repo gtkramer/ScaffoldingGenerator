@@ -7,12 +7,12 @@ namespace ScaffoldingGenerator.IO
 {
     public class StlBinaryReader : StlReader
     {
-        public override Facet[] Read(string filePath)
+        public override Polygon3[] Read(string filePath)
         {
             int facetCount = GetFacetCount(filePath);
             using (BinaryReader reader = new BinaryReader(File.OpenRead(filePath))) {
                 reader.ReadBytes(84);
-                Facet[] facets = new Facet[facetCount];
+                Polygon3[] facets = new Polygon3[facetCount];
                 for (int f = 0; f != facetCount; f++)
                 {
                     Vector3 normal = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -21,7 +21,7 @@ namespace ScaffoldingGenerator.IO
                     {
                         vertices[v] = new Point3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                     }
-                    facets[f] = new Facet(normal, vertices);
+                    facets[f] = new Polygon3(normal, vertices);
                     reader.ReadBytes(2);
                 }
                 return facets;

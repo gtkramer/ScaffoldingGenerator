@@ -7,7 +7,7 @@ namespace ScaffoldingGenerator.IO
 {
     public class StlBinaryWriter : StlWriter
     {
-        public override void Write(string filePath, Facet[] facets)
+        public override void Write(string filePath, Polygon3[] facets)
         {
             if (facets.Length == 0)
             {
@@ -22,7 +22,7 @@ namespace ScaffoldingGenerator.IO
             {
                 writer.Write(new byte[80]);
                 writer.Write(facets.Length);
-                foreach (Facet facet in facets)
+                foreach (Polygon3 facet in facets)
                 {
                     Vector3 normal = facet.Normal;
                     writer.Write(normal.X);

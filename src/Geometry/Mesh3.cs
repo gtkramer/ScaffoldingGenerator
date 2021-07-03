@@ -2,12 +2,12 @@ namespace ScaffoldingGenerator.Geometry
 {
     public class Mesh3
     {
-        public Facet[] Facets;
+        public Polygon3[] Facets;
         public Point3 MinPoint;
         public Point3 MaxPoint;
         public Point3 CenterPoint;
 
-        public Mesh3(Facet[] facets)
+        public Mesh3(Polygon3[] facets)
         {
             Facets = facets;
 
@@ -15,7 +15,7 @@ namespace ScaffoldingGenerator.Geometry
             float maxX, maxY, maxZ;
             minX = minY = minZ = float.MaxValue;
             maxX = maxY = maxZ = float.MinValue;
-            foreach (Facet facet in facets)
+            foreach (Polygon3 facet in facets)
             {
                 foreach (Point3 vertex in facet.Vertices)
                 {
