@@ -13,7 +13,7 @@ namespace CalcNet.Spatial.Euclidean
             this.Point = point;
         }
 
-        public Point3? GetIntersectionPoint(LineSegment3D segment)
+        public Point3? GetIntersectionPoint(LineSegment3 segment)
         {
             Point3 p = segment.StartPoint;
             Vector3 m = segment.ToVector3();
