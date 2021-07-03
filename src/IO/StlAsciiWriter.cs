@@ -29,7 +29,7 @@ namespace ScaffoldingGenerator.IO
                     Vector3 normal = facet.Normal;
                     writer.Write("\t" + "facet normal " + normal.X + " " + normal.Y + " " + normal.Z + "\n");
                     writer.Write("\t\t" + "outer loop" + "\n");
-                    foreach (Point3D vertex in facet.Vertices)
+                    foreach (Point3 vertex in facet.Vertices)
                     {
                         writer.Write("\t\t\t" + "vertex " + vertex.X + " " + vertex.Y + " " + vertex.Z + "\n");
                     }

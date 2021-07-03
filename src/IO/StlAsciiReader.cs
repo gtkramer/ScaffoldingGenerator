@@ -61,20 +61,20 @@ public class StlAsciiReader : StlReader
         }
     }
 
-    private class LoopVisitor : StlAsciiBaseVisitor<Point3D[]>
+    private class LoopVisitor : StlAsciiBaseVisitor<Point3[]>
     {
-        public override Point3D[] VisitLoop(StlAsciiParser.LoopContext context)
+        public override Point3[] VisitLoop(StlAsciiParser.LoopContext context)
         {
             VertexVisitor vertexVisitor = new VertexVisitor();
             return context.vertex().Select((x) => vertexVisitor.VisitVertex(x)).ToArray();
         }
     }
 
-    private class VertexVisitor : StlAsciiBaseVisitor<Point3D>
+    private class VertexVisitor : StlAsciiBaseVisitor<Point3>
     {
-        public override Point3D VisitVertex(StlAsciiParser.VertexContext context)
+        public override Point3 VisitVertex(StlAsciiParser.VertexContext context)
         {
-            return new Point3D(context.FLOAT().Select((x) => float.Parse(x.GetText())));
+            return new Point3(context.FLOAT().Select((x) => float.Parse(x.GetText())));
         }
     }
 }

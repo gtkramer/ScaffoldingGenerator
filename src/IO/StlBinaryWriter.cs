@@ -29,7 +29,7 @@ namespace ScaffoldingGenerator.IO
                     writer.Write(normal.X);
                     writer.Write(normal.Y);
                     writer.Write(normal.Z);
-                    foreach (Point3D vertex in facet.Vertices)
+                    foreach (Point3 vertex in facet.Vertices)
                     {
                         writer.Write(vertex.X);
                         writer.Write(vertex.Y);

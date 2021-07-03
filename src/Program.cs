@@ -155,9 +155,9 @@ namespace ScaffoldingGenerator
             return AngleConverter.RadToDeg(Vector3.CalculateAngle(facet.Normal, XYNormal)) > 180 - criticalAngle;
         }
 
-        private static Point3D[] GetEdgeFacetKeys(Facet[] facets)
+        private static Point3[] GetEdgeFacetKeys(Facet[] facets)
         {
-            List<Point3D> keys = new List<Point3D>(facets.Length * 3);
+            List<Point3> keys = new List<Point3>(facets.Length * 3);
             foreach (Facet facet in facets)
             {
                 keys.AddRange(facet.EdgeMidPoints);
@@ -169,7 +169,7 @@ namespace ScaffoldingGenerator
         {
             foreach (Facet facet in facets)
             {
-                foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
+                foreach (Point3 edgeMidPoint in facet.EdgeMidPoints)
                 {
                     List<Facet> edgeFacetList = edgeFacetIndex[edgeMidPoint];
                     if (edgeFacetList == null)
@@ -231,7 +231,7 @@ namespace ScaffoldingGenerator
         private static List<Facet> GetAdjacentFacets(Facet facet, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             List<Facet> adjacentFacets = new List<Facet>(3);
-            foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
+            foreach (Point3 edgeMidPoint in facet.EdgeMidPoints)
             {
                 foreach (Facet adjacentFacet in edgeFacetIndex[edgeMidPoint])
                 {
@@ -263,12 +263,12 @@ namespace ScaffoldingGenerator
             return isLargeRegion;
         }
 
-        private static List<Point3D> GetBoundingVertices(Polygon3D region, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Point3> GetBoundingVertices(Polygon3D region, Point3DTree<List<Facet>> edgeFacetIndex)
         {
-            List<Point3D> boundingVertices = new List<Point3D>();
+            List<Point3> boundingVertices = new List<Point3>();
             foreach (Facet facet in region.Facets)
             {
-                foreach (Point3D edgeMidPoint in facet.EdgeMidPoints)
+                foreach (Point3 edgeMidPoint in facet.EdgeMidPoints)
                 {
                     if (edgeFacetIndex[edgeMidPoint].Count == 1)
                     {
@@ -279,14 +279,14 @@ namespace ScaffoldingGenerator
             return boundingVertices;
         }
 
-        private static List<Vector3> GetLargeDiagonals(List<Point3D> boundingVertices, double dimensionLength)
+        private static List<Vector3> GetLargeDiagonals(List<Point3> boundingVertices, double dimensionLength)
         {
             List<Vector3> diagonals = new List<Vector3>();
             for (int i = 0; i != boundingVertices.Count; i++)
             {
-                Point3D point1 = boundingVertices[i];
+                Point3 point1 = boundingVertices[i];
                 for (int j = i; j != boundingVertices.Count; j++) {
-                    Point3D point2 = boundingVertices[j];
+                    Point3 point2 = boundingVertices[j];
                     if (point1.DistanceTo(point2) >= dimensionLength)
                     {
                         diagonals.Add(new Vector3(point2.X - point1.X, point2.Y - point1.Y, point2.Z - point1.Z));
@@ -299,7 +299,7 @@ namespace ScaffoldingGenerator
         private static List<Facet> GenerateLineScaffolding(Polygon3D model, List<Polygon3D> regions, Vector3 supportNormal, float supportSpacing, float plateSpacing) {
             List<Facet> scaffolding = new List<Facet>();
             foreach (Polygon3D region in regions) {
-                foreach (List<Point3D> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
+                foreach (List<Point3> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
                     scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing, model));
                 }
             }
@@ -307,12 +307,12 @@ namespace ScaffoldingGenerator
             return scaffolding;
         }
 
-        private static List<List<Point3D>> GetLineSupportIntersections(Polygon3D region, Vector3 supportNormal, float supportSpacing) {
-            List<List<Point3D>> intersectionPointSets = new List<List<Point3D>>();
+        private static List<List<Point3>> GetLineSupportIntersections(Polygon3D region, Vector3 supportNormal, float supportSpacing) {
+            List<List<Point3>> intersectionPointSets = new List<List<Point3>>();
 
             List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
             foreach (Plane plane in planes) {
-                List<Point3D> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
+                List<Point3> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
                 if (intersectionPoints.Count >= 2) {
                     intersectionPointSets.Add(intersectionPoints);
                 }
@@ -329,8 +329,8 @@ namespace ScaffoldingGenerator
             for (int i = 0; i != numIntervals; i++)
             {
                 float shift = (i + 1) * supportSpacing;
-                Point3D positivePoint = region.CenterPoint.Move(supportNormal, shift);
-                Point3D negativePoint = region.CenterPoint.Move(supportNormal, -shift);
+                Point3 positivePoint = region.CenterPoint.Move(supportNormal, shift);
+                Point3 negativePoint = region.CenterPoint.Move(supportNormal, -shift);
                 planes.Add(new Plane(supportNormal, positivePoint));
                 planes.Add(new Plane(supportNormal, negativePoint));
             }
@@ -338,12 +338,12 @@ namespace ScaffoldingGenerator
             return planes;
         }
 
-        private static List<Point3D> GetLineScaffoldingIntersections(Polygon3D region, Plane support) {
-            List<Point3D> intersections = new List<Point3D>();
+        private static List<Point3> GetLineScaffoldingIntersections(Polygon3D region, Plane support) {
+            List<Point3> intersections = new List<Point3>();
             foreach (Facet facet in region.Facets) {
                 foreach (LineSegment3D edge in facet.Edges) {
                     try {
-                        Point3D? intersection = support.GetIntersectionPoint(edge);
+                        Point3? intersection = support.GetIntersectionPoint(edge);
                         if (!object.ReferenceEquals(intersection, null)) {
                             intersections.Add(intersection);
                         }
@@ -354,12 +354,12 @@ namespace ScaffoldingGenerator
                     }
                 }
             }
-            List<Point3D> uniqueIntersections = intersections.Distinct().ToList();
+            List<Point3> uniqueIntersections = intersections.Distinct().ToList();
             Console.WriteLine("Found " + uniqueIntersections.Count + " intersection points between plane and region");
             return uniqueIntersections;
         }
 
-        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3D> intersectionPoints, Vector3 supportNormal, double plateSpacing, Polygon3D model)
+        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3> intersectionPoints, Vector3 supportNormal, double plateSpacing, Polygon3D model)
         {
             intersectionPoints.Sort(new Point3DXComparer());
             double xyLength = intersectionPoints[0].DistanceTo(intersectionPoints[intersectionPoints.Count - 1]);
@@ -367,20 +367,20 @@ namespace ScaffoldingGenerator
 
             double buildPlateZ = model.MinPoint.Z - plateSpacing;
             double zSegmentCountSum = 0;
-            foreach (Point3D intersection in intersectionPoints) {
+            foreach (Point3 intersection in intersectionPoints) {
                 zSegmentCountSum += Math.Abs(intersection.Z - buildPlateZ) / xyAvgSegmentLength;
             }
             int zAvgSegmentCount = (int)(zSegmentCountSum / intersectionPoints.Count);
             int numRows = zAvgSegmentCount + 2;
             int numCols = intersectionPoints.Count;
-            Point3D[,] pointGrid = new Point3D[numRows, numCols];
+            Point3[,] pointGrid = new Point3[numRows, numCols];
             for (int row = 0; row != numRows; row++)
             {
                 for (int col = 0; col != numCols; col++)
                 {
-                    Point3D referencePoint = intersectionPoints[col];
+                    Point3 referencePoint = intersectionPoints[col];
                     float newZ = (float)(referencePoint.Z - Math.Abs(referencePoint.Z - buildPlateZ) / (numRows - 1) * row);
-                    pointGrid[row, col] = new Point3D(referencePoint.X, referencePoint.Y, newZ);
+                    pointGrid[row, col] = new Point3(referencePoint.X, referencePoint.Y, newZ);
                 }
             }
             Console.WriteLine("Filled grid of points");
@@ -391,10 +391,10 @@ namespace ScaffoldingGenerator
                 for (int col = 0; col != numCols - 1; col++)
                 {
                     //Console.WriteLine($"Row {row}, Col {col}");
-                    Point3D p1 = pointGrid[row + 1, col + 1];
-                    Point3D p2 = pointGrid[row + 1, col];
-                    Point3D p3 = pointGrid[row, col];
-                    Point3D p4 = pointGrid[row, col + 1];
+                    Point3 p1 = pointGrid[row + 1, col + 1];
+                    Point3 p2 = pointGrid[row + 1, col];
+                    Point3 p3 = pointGrid[row, col];
+                    Point3 p4 = pointGrid[row, col + 1];
 
                     scaffoldingFacets.Add(TesselatePoints(p3, p2, p1));
                     scaffoldingFacets.Add(TesselatePoints(p1, p4, p3));
@@ -404,14 +404,14 @@ namespace ScaffoldingGenerator
             return scaffoldingFacets;
         }
 
-        private static Facet TesselatePoints(Point3D v1, Point3D v2, Point3D v3) {
+        private static Facet TesselatePoints(Point3 v1, Point3 v2, Point3 v3) {
             Vector3 AB = v2 - v1;
             //Console.WriteLine("Created vector u from " + v1 + " and " + v2);
             Vector3 AC = v3 - v1;
             //Console.WriteLine("Created vector v from " + v1 + " and " + v3);
             Vector3 normal = Vector3.Cross(AB, AC);
             //Console.WriteLine("Tesselated a facet");
-            return new Facet(normal, new Point3D[]{v1, v2, v3});
+            return new Facet(normal, new Point3[]{v1, v2, v3});
         }
     }
 }

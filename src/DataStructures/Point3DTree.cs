@@ -6,18 +6,18 @@ namespace ScaffoldingGenerator.DataStructures
 {
     public class Point3DTree<T>
     {
-        private static IComparer<Point3D>[] CoordComparers = { new Point3DXComparer(), new Point3DYComparer(), new Point3DZComparer() };
-        public Point3D[] Keys;
+        private static IComparer<Point3>[] CoordComparers = { new Point3DXComparer(), new Point3DYComparer(), new Point3DZComparer() };
+        public Point3[] Keys;
         public T[] Values;
 
-        public Point3DTree(Point3D[] keys)
+        public Point3DTree(Point3[] keys)
         {
             Keys = keys;
             Values = new T[Keys.Length];
             BuildRecursively(Keys, 0, Keys.Length, 0);
         }
 
-        private void BuildRecursively(Point3D[] points, int index, int length, int level)
+        private void BuildRecursively(Point3[] points, int index, int length, int level)
         {
             if (length > 1)
             {
@@ -30,7 +30,7 @@ namespace ScaffoldingGenerator.DataStructures
             }
         }
 
-        public T this[Point3D key]
+        public T this[Point3 key]
         {
             get
             {
@@ -42,7 +42,7 @@ namespace ScaffoldingGenerator.DataStructures
             }
         }
 
-        private int GetValueIndexRecursively(Point3D key, int index, int length, int level)
+        private int GetValueIndexRecursively(Point3 key, int index, int length, int level)
         {
             int upperIndex = index + length - 1;
             int medianIndex = (index + upperIndex) / 2;

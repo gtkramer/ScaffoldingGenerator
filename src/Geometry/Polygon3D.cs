@@ -6,9 +6,9 @@ namespace ScaffoldingGenerator.Geometry
     public class Polygon3D
     {
         public Facet[] Facets;
-        public Point3D MinPoint;
-        public Point3D MaxPoint;
-        public Point3D CenterPoint;
+        public Point3 MinPoint;
+        public Point3 MaxPoint;
+        public Point3 CenterPoint;
 
         public Polygon3D(Facet[] facets)
         {
@@ -20,7 +20,7 @@ namespace ScaffoldingGenerator.Geometry
             maxX = maxY = maxZ = float.MinValue;
             foreach (Facet facet in facets)
             {
-                foreach (Point3D vertex in facet.Vertices)
+                foreach (Point3 vertex in facet.Vertices)
                 {
                     if (vertex.X < minX)
                     {
@@ -49,9 +49,9 @@ namespace ScaffoldingGenerator.Geometry
                     }
                 }
             }
-            MinPoint = new Point3D(minX, minY, minZ);
-            MaxPoint = new Point3D(maxX, maxY, maxZ);
-            CenterPoint = Point3D.MidPoint(MinPoint, MaxPoint);
+            MinPoint = new Point3(minX, minY, minZ);
+            MaxPoint = new Point3(maxX, maxY, maxZ);
+            CenterPoint = Point3.MidPoint(MinPoint, MaxPoint);
         }
     }
 }

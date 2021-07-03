@@ -3,13 +3,13 @@ using CalcNet.Spatial.Euclidean;
 
 namespace ScaffoldingGenerator.DataStructures
 {
-    public abstract class Point3DComparer : IComparer<Point3D> {
-        public abstract int Compare(Point3D a, Point3D b);
+    public abstract class Point3DComparer : IComparer<Point3> {
+        public abstract int Compare(Point3 a, Point3 b);
     }
 
     public class Point3DXComparer : Point3DComparer
     {
-        public override int Compare(Point3D a, Point3D b)
+        public override int Compare(Point3 a, Point3 b)
         {
             if (a.X < b.X)
             {
@@ -50,7 +50,7 @@ namespace ScaffoldingGenerator.DataStructures
 
     public class Point3DYComparer : Point3DComparer
     {
-        public override int Compare(Point3D a, Point3D b)
+        public override int Compare(Point3 a, Point3 b)
         {
             if (a.Y < b.Y)
             {
@@ -91,7 +91,7 @@ namespace ScaffoldingGenerator.DataStructures
 
     public class Point3DZComparer : Point3DComparer
     {
-        public override int Compare(Point3D a, Point3D b)
+        public override int Compare(Point3 a, Point3 b)
         {
             if (a.Z < b.Z)
             {

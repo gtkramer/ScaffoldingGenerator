@@ -17,10 +17,10 @@ namespace ScaffoldingGenerator.IO
                 for (int f = 0; f != facetCount; f++)
                 {
                     Vector3 normal = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                    Point3D[] vertices = new Point3D[3];
+                    Point3[] vertices = new Point3[3];
                     for (int v = 0; v != vertices.Length; v++)
                     {
-                        vertices[v] = new Point3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        vertices[v] = new Point3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                     }
                     facets[f] = new Facet(normal, vertices);
                     reader.ReadBytes(2);
