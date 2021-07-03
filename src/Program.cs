@@ -309,8 +309,8 @@ namespace ScaffoldingGenerator
         private static List<List<Point3>> GetLineSupportIntersections(Mesh3 region, Vector3 supportNormal, float supportSpacing) {
             List<List<Point3>> intersectionPointSets = new List<List<Point3>>();
 
-            List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
-            foreach (Plane plane in planes) {
+            List<Plane3> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
+            foreach (Plane3 plane in planes) {
                 List<Point3> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
                 if (intersectionPoints.Count >= 2) {
                     intersectionPointSets.Add(intersectionPoints);
@@ -320,24 +320,24 @@ namespace ScaffoldingGenerator
             return intersectionPointSets;
         }
 
-        private static List<Plane> GetLineSupportPlanes(Mesh3 region, Vector3 supportNormal, float supportSpacing)
+        private static List<Plane3> GetLineSupportPlanes(Mesh3 region, Vector3 supportNormal, float supportSpacing)
         {
-            List<Plane> planes = new List<Plane>();
-            planes.Add(new Plane(supportNormal, region.CenterPoint));
+            List<Plane3> planes = new List<Plane3>();
+            planes.Add(new Plane3(supportNormal, region.CenterPoint));
             int numIntervals = (int)(region.MinPoint.DistanceTo(region.MaxPoint) / supportSpacing / 2);
             for (int i = 0; i != numIntervals; i++)
             {
                 float shift = (i + 1) * supportSpacing;
                 Point3 positivePoint = region.CenterPoint.Move(supportNormal, shift);
                 Point3 negativePoint = region.CenterPoint.Move(supportNormal, -shift);
-                planes.Add(new Plane(supportNormal, positivePoint));
-                planes.Add(new Plane(supportNormal, negativePoint));
+                planes.Add(new Plane3(supportNormal, positivePoint));
+                planes.Add(new Plane3(supportNormal, negativePoint));
             }
             Console.WriteLine("Found " + planes.Count + " planes of support for region");
             return planes;
         }
 
-        private static List<Point3> GetLineScaffoldingIntersections(Mesh3 region, Plane support) {
+        private static List<Point3> GetLineScaffoldingIntersections(Mesh3 region, Plane3 support) {
             List<Point3> intersections = new List<Point3>();
             foreach (Polygon3 facet in region.Facets) {
                 foreach (LineSegment3 edge in facet.Edges) {

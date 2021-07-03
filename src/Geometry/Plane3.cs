@@ -2,12 +2,12 @@ using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.Geometry
 {
-    public class Plane
+    public class Plane3
     {
         public Vector3 Normal { get; }
         public Point3 Point { get; }
 
-        public Plane(Vector3 normal, Point3 point)
+        public Plane3(Vector3 normal, Point3 point)
         {
             this.Normal = normal;
             this.Point = point;
