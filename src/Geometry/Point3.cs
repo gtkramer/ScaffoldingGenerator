@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using OpenTK.Mathematics;
 
 namespace ScaffoldingGenerator.Geometry {
@@ -48,27 +47,27 @@ namespace ScaffoldingGenerator.Geometry {
             return (this - point).Length;
         }
 
-        public bool Equals(Point3? other)
+        public bool Equals(Point3? point)
         {
-            return !object.ReferenceEquals(other, null) && this.X == other.X && this.Y == other.Y && this.Z == other.Z;
+            return !object.ReferenceEquals(point, null) && this.X == point.X && this.Y == point.Y && this.Z == point.Z;
         }
 
         public override bool Equals(object? obj) {
-            return !object.ReferenceEquals(obj, null) && obj is Point3 p && this.Equals(p);
+            return !object.ReferenceEquals(obj, null) && obj is Point3 point && this.Equals(point);
         }
 
         public override int GetHashCode() {
             return HashCode.Combine(this.X, this.Y, this.Z);
         }
 
-        public bool Equals(Point3? x, Point3? y)
+        public bool Equals(Point3? p1, Point3? p2)
         {
-            return X.Equals(y);
+            return !object.ReferenceEquals(p1, null) && p1.Equals(p2);
         }
 
-        public int GetHashCode([DisallowNull] Point3 obj)
+        public int GetHashCode(Point3 point)
         {
-            return obj.GetHashCode();
+            return point.GetHashCode();
         }
 
         public override string ToString()
