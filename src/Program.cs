@@ -47,9 +47,9 @@ namespace ScaffoldingGenerator
         // Pointing in Z direction
         private static Vector3 XYNormal = new Vector3(0, 0, 1);
         // Pointing in Y direction
-        private static Vector3 XZNormal = new Vector3(2, 1, 0);
+        private static Vector3 XZNormal = new Vector3(0, 1, 0);
         // Pointing in X direction
-        private static Vector3 YZNormal = new Vector3(1, -2, 0);
+        private static Vector3 YZNormal = new Vector3(1, 0, 0);
 
         private static Point3DComparer Point3DComparer = new Point3DXComparer();
 
@@ -110,12 +110,12 @@ namespace ScaffoldingGenerator
                 List<Polygon3> scaffoldingFacets = new List<Polygon3>();
                 if (opts.DoXScaffolding || opts.DoYScaffolding) {
                     List<Vector3> supportNormals = new List<Vector3>();
-                    // FIXME TODO Add rotation of normal
+                    Quaternion rotation = new Quaternion(0, 0, (float)AngleConverter.DegToRad(opts.ScaffoldingAngle));
                     if (opts.DoXScaffolding) {
-                        supportNormals.Add(YZNormal);
+                        supportNormals.Add(Vector3.Transform(YZNormal, rotation));
                     }
                     if (opts.DoYScaffolding) {
-                        supportNormals.Add(XZNormal);
+                        supportNormals.Add(Vector3.Transform(XZNormal, rotation));
                     }
                     Console.WriteLine("Made support normals");
                     foreach (Vector3 supportNormal in supportNormals) {
