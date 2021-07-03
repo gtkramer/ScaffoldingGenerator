@@ -16,16 +16,6 @@ namespace CalcNet.Spatial.Euclidean {
             this.Z = z;
         }
 
-        public Point3(IEnumerable<float> floats) {
-            IEnumerator<float> enumerator = floats.GetEnumerator();
-            enumerator.MoveNext();
-            this.X = enumerator.Current;
-            enumerator.MoveNext();
-            this.Y = enumerator.Current;
-            enumerator.MoveNext();
-            this.Z = enumerator.Current;
-        }
-
         public static Point3 operator +(Point3 point, Vector3 vector) {
             return new Point3(point.X + vector.X, point.Y + vector.Y, point.Z + vector.Z);
         }

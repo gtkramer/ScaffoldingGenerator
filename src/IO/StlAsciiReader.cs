@@ -74,7 +74,15 @@ public class StlAsciiReader : StlReader
     {
         public override Point3 VisitVertex(StlAsciiParser.VertexContext context)
         {
-            return new Point3(context.FLOAT().Select((x) => float.Parse(x.GetText())));
+            IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
+            IEnumerator<float> enumerator = parsed.GetEnumerator();
+            enumerator.MoveNext();
+            float x = enumerator.Current;
+            enumerator.MoveNext();
+            float y = enumerator.Current;
+            enumerator.MoveNext();
+            float z = enumerator.Current;
+            return new Point3(x, y, z);
         }
     }
 }
