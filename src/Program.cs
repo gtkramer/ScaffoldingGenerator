@@ -55,8 +55,10 @@ namespace ScaffoldingGenerator
 
         public class Options
         {
+            #pragma warning disable 8618
             [Option("stl-file", Required = true, HelpText = "Input STL file")]
             public string StlFilePath { get; set; }
+            #pragma warning restore 8618
             [Option("ascii", Required = false, Default = false, HelpText = "Work with STL files in ASCII, otherwise, assume binary if absent")]
             public bool IsStlAscii { get; set; }
 
