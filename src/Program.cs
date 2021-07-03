@@ -89,7 +89,7 @@ namespace ScaffoldingGenerator
             // Consider places where we can avoid a conversion of .ToArray/.ToList and rely on the IEnumerable interface
             try
             {
-                Polygon3D model = new Polygon3D(ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii));
+                Mesh3 model = new Mesh3(ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii));
                 Console.WriteLine("Read " + model.Facets.Length + " facets from file");
 
                 Facet[] unsupportedFacets = model.Facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
@@ -101,10 +101,10 @@ namespace ScaffoldingGenerator
                 CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
                 Console.WriteLine("Association created between facets and edges");
 
-                List<Polygon3D> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
+                List<Mesh3> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
                 Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
 
-                List<Polygon3D> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
+                List<Mesh3> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
                 Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
 
                 List<Facet> scaffoldingFacets = new List<Facet>();
@@ -185,15 +185,15 @@ namespace ScaffoldingGenerator
             }
         }
 
-        private static List<Polygon3D> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Mesh3> BuildUnsupportedRegions(Facet[] unsupportedFacets, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             Point3DTree<bool> facetVisitedIndex = new Point3DTree<bool>(unsupportedFacets.Select(facet => facet.Centroid).ToArray());
-            List<Polygon3D> unsupportedRegions = new List<Polygon3D>();
+            List<Mesh3> unsupportedRegions = new List<Mesh3>();
             foreach (Facet unsupportedFacet in unsupportedFacets)
             {
                 if (!facetVisitedIndex[unsupportedFacet.Centroid])
                 {
-                    unsupportedRegions.Add(new Polygon3D(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex, facetVisitedIndex)));
+                    unsupportedRegions.Add(new Mesh3(GrowUnsupportedRegion(unsupportedFacet, edgeFacetIndex, facetVisitedIndex)));
                 }
             }
             return unsupportedRegions;
@@ -243,7 +243,7 @@ namespace ScaffoldingGenerator
             return adjacentFacets;
         }
 
-        private static bool IsLargeRegion(Polygon3D region, Point3DTree<List<Facet>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
+        private static bool IsLargeRegion(Mesh3 region, Point3DTree<List<Facet>> edgeFacetIndex, double dimensionLength, double toleranceAngle)
         {
             bool isLargeRegion = false;
             List<Vector3> largeDiagonals = GetLargeDiagonals(GetBoundingVertices(region, edgeFacetIndex), dimensionLength);
@@ -262,7 +262,7 @@ namespace ScaffoldingGenerator
             return isLargeRegion;
         }
 
-        private static List<Point3> GetBoundingVertices(Polygon3D region, Point3DTree<List<Facet>> edgeFacetIndex)
+        private static List<Point3> GetBoundingVertices(Mesh3 region, Point3DTree<List<Facet>> edgeFacetIndex)
         {
             List<Point3> boundingVertices = new List<Point3>();
             foreach (Facet facet in region.Facets)
@@ -295,9 +295,9 @@ namespace ScaffoldingGenerator
             return diagonals;
         }
 
-        private static List<Facet> GenerateLineScaffolding(Polygon3D model, List<Polygon3D> regions, Vector3 supportNormal, float supportSpacing, float plateSpacing) {
+        private static List<Facet> GenerateLineScaffolding(Mesh3 model, List<Mesh3> regions, Vector3 supportNormal, float supportSpacing, float plateSpacing) {
             List<Facet> scaffolding = new List<Facet>();
-            foreach (Polygon3D region in regions) {
+            foreach (Mesh3 region in regions) {
                 foreach (List<Point3> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
                     scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing, model));
                 }
@@ -306,7 +306,7 @@ namespace ScaffoldingGenerator
             return scaffolding;
         }
 
-        private static List<List<Point3>> GetLineSupportIntersections(Polygon3D region, Vector3 supportNormal, float supportSpacing) {
+        private static List<List<Point3>> GetLineSupportIntersections(Mesh3 region, Vector3 supportNormal, float supportSpacing) {
             List<List<Point3>> intersectionPointSets = new List<List<Point3>>();
 
             List<Plane> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
@@ -320,7 +320,7 @@ namespace ScaffoldingGenerator
             return intersectionPointSets;
         }
 
-        private static List<Plane> GetLineSupportPlanes(Polygon3D region, Vector3 supportNormal, float supportSpacing)
+        private static List<Plane> GetLineSupportPlanes(Mesh3 region, Vector3 supportNormal, float supportSpacing)
         {
             List<Plane> planes = new List<Plane>();
             planes.Add(new Plane(supportNormal, region.CenterPoint));
@@ -337,7 +337,7 @@ namespace ScaffoldingGenerator
             return planes;
         }
 
-        private static List<Point3> GetLineScaffoldingIntersections(Polygon3D region, Plane support) {
+        private static List<Point3> GetLineScaffoldingIntersections(Mesh3 region, Plane support) {
             List<Point3> intersections = new List<Point3>();
             foreach (Facet facet in region.Facets) {
                 foreach (LineSegment3 edge in facet.Edges) {
@@ -358,7 +358,7 @@ namespace ScaffoldingGenerator
             return uniqueIntersections;
         }
 
-        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3> intersectionPoints, Vector3 supportNormal, double plateSpacing, Polygon3D model)
+        private static IEnumerable<Facet> CreateTesselatedLineSupport(List<Point3> intersectionPoints, Vector3 supportNormal, double plateSpacing, Mesh3 model)
         {
             intersectionPoints.Sort(new Point3DXComparer());
             double xyLength = intersectionPoints[0].DistanceTo(intersectionPoints[intersectionPoints.Count - 1]);

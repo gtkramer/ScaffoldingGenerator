@@ -1,15 +1,13 @@
-using System.Collections.Generic;
-
 namespace ScaffoldingGenerator.Geometry
 {
-    public class Polygon3D
+    public class Mesh3
     {
         public Facet[] Facets;
         public Point3 MinPoint;
         public Point3 MaxPoint;
         public Point3 CenterPoint;
 
-        public Polygon3D(Facet[] facets)
+        public Mesh3(Facet[] facets)
         {
             Facets = facets;
 
