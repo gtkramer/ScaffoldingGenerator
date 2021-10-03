@@ -16,6 +16,15 @@ namespace ScaffoldingGenerator
 {
     public class Program
     {
+        // Pointing in Z direction
+        private static Vector3 XYNormal = new Vector3(0, 0, 1);
+        // Pointing in Y direction
+        private static Vector3 XZNormal = new Vector3(0, 1, 0);
+        // Pointing in X direction
+        private static Vector3 YZNormal = new Vector3(1, 0, 0);
+
+        private static Point3Comparer Point3DComparer = new Point3XComparer();
+
         public static void Main(string[] args)
         {
             //MainRenderWindow(args);
@@ -42,45 +51,6 @@ namespace ScaffoldingGenerator
             Parser.Default.ParseArguments<Options>(args)
             .WithParsed<Options>(RunOptions);
             //.WithNotParsed<Options>(HandleParseError);
-        }
-
-        // Pointing in Z direction
-        private static Vector3 XYNormal = new Vector3(0, 0, 1);
-        // Pointing in Y direction
-        private static Vector3 XZNormal = new Vector3(0, 1, 0);
-        // Pointing in X direction
-        private static Vector3 YZNormal = new Vector3(1, 0, 0);
-
-        private static Point3Comparer Point3DComparer = new Point3XComparer();
-
-        public class Options
-        {
-            #pragma warning disable 8618
-            [Option("stl-file", Required = true, HelpText = "Input STL file")]
-            public string StlFilePath { get; set; }
-            #pragma warning restore 8618
-            [Option("ascii", Required = false, Default = false, HelpText = "Work with STL files in ASCII, otherwise, assume binary if absent")]
-            public bool IsStlAscii { get; set; }
-
-            [Option("critical-angle", Required = false, Default = 45, HelpText = "Critical angle for supporting facets")]
-            public double CriticalAngle { get; set; }
-            [Option("dimension-length", Required = false, Default = 0.25, HelpText = "Dimension of minimum area needing supported")]
-            public double DimensionLength { get; set; }
-            [Option("tolerance-angle", Required = false, Default = 10, HelpText = "Used for calculating area")]
-            public double ToleranceAngle { get; set; }
-            [Option("scaffolding-angle", Required = false, Default = 0, HelpText = "Angle at which to rotate line supports")]
-            public double ScaffoldingAngle { get; set; }
-            [Option("support-spacing", Required = false, Default = 0.125, HelpText = "Spacing between line supports")]
-            public double SupportSpacing { get; set; }
-            [Option("plate-spacing", Required = false, Default = 0.5, HelpText = "Scaffolded space between model and build plate")]
-            public double PlateSpacing { get; set; }
-
-            [Option("x-scaffolding", Required = false, Default = false, HelpText = "Generate X scaffolding")]
-            public bool DoXScaffolding { get; set; }
-            [Option("y-scaffolding", Required = false, Default = false, HelpText = "Generate Y scaffolding")]
-            public bool DoYScaffolding { get; set; }
-            [Option("contour-scaffolding", Required = false, Default = false, HelpText = "Generate contour scaffolding")]
-            public bool DoContourScaffolding { get; set; }
         }
 
         private static void RunOptions(Options opts)
@@ -121,7 +91,7 @@ namespace ScaffoldingGenerator
                     }
                     Console.WriteLine("Made support normals");
                     foreach (Vector3 supportNormal in supportNormals) {
-                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)opts.SupportSpacing, (float)opts.PlateSpacing));
+                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, opts.SupportSpacing, opts.PlateSpacing));
                     }
                 }
                 StlBinaryWriter writer = new StlBinaryWriter();
