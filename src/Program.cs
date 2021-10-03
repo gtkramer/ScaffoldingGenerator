@@ -124,9 +124,6 @@ namespace ScaffoldingGenerator
                         scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)opts.SupportSpacing, (float)opts.PlateSpacing));
                     }
                 }
-                // if (opts.DoContourScaffolding) {
-                //     scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, opts.PlateSpacing);
-                // }
                 StlBinaryWriter writer = new StlBinaryWriter();
                 writer.Write("out.stl", scaffoldingFacets.ToArray());
             }
@@ -300,26 +297,16 @@ namespace ScaffoldingGenerator
         private static List<Polygon3> GenerateLineScaffolding(Mesh3 model, List<Mesh3> regions, Vector3 supportNormal, float supportSpacing, float plateSpacing) {
             List<Polygon3> scaffolding = new List<Polygon3>();
             foreach (Mesh3 region in regions) {
-                foreach (List<Point3> intersectionPoints in GetLineSupportIntersections(region, supportNormal, supportSpacing)) {
-                    scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing, model));
+                List<Plane3> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
+                foreach (Plane3 plane in planes) {
+                    List<Point3> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
+                    if (intersectionPoints.Count >= 2) {
+                        scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing, model));
+                    }
                 }
             }
             Console.WriteLine("Generated line scaffolding");
             return scaffolding;
-        }
-
-        private static List<List<Point3>> GetLineSupportIntersections(Mesh3 region, Vector3 supportNormal, float supportSpacing) {
-            List<List<Point3>> intersectionPointSets = new List<List<Point3>>();
-
-            List<Plane3> planes = GetLineSupportPlanes(region, supportNormal, supportSpacing);
-            foreach (Plane3 plane in planes) {
-                List<Point3> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
-                if (intersectionPoints.Count >= 2) {
-                    intersectionPointSets.Add(intersectionPoints);
-                }
-            }
-            Console.WriteLine("Aggregated intersection points between planes and region");
-            return intersectionPointSets;
         }
 
         private static List<Plane3> GetLineSupportPlanes(Mesh3 region, Vector3 supportNormal, float supportSpacing)
