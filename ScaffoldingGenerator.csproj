@@ -7,17 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="**/*.glade" />
-    <EmbeddedResource Include="**/*.glade">
-      <LogicalName>%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.2" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="GtkSharp" Version="3.24.24.34" />
-    <PackageReference Include="OpenTK" Version="4.6.4" />
+    <PackageReference Include="OpenTK" Version="4.6.7" />
   </ItemGroup>
 
 </Project>

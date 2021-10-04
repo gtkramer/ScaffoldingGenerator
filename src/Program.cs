@@ -5,13 +5,8 @@ using ScaffoldingGenerator.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 using ScaffoldingGenerator.DataStructures;
-using ScaffoldingGenerator.GUI;
 using OpenTK.Mathematics;
 
-/*
-http://www.oldschoolpixels.com/?p=390
-http://grbd.github.io/posts/2016/06/25/gtksharp-part-3-basic-example-with-vs-and-glade/
-*/
 namespace ScaffoldingGenerator
 {
     public class Program
@@ -26,27 +21,6 @@ namespace ScaffoldingGenerator
         private static Point3Comparer Point3DComparer = new Point3XComparer();
 
         public static void Main(string[] args)
-        {
-            //MainRenderWindow(args);
-            //MainToolWindow(args);
-            MainCmdLine(args);
-        }
-
-        private static void MainRenderWindow(string[] args)
-        {
-            using (RenderWindow renderWindow = RenderWindow.CreateInstance()) {
-                renderWindow.Run();
-            }
-        }
-
-        private static void MainToolWindow(string[] args)
-        {
-            Gtk.Application.Init();
-            ToolWindow toolWindow = ToolWindow.CreateInstance();
-            Gtk.Application.Run();
-        }
-
-        private static void MainCmdLine(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
             .WithParsed<Options>(RunOptions);
