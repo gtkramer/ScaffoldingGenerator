@@ -1,87 +1,89 @@
 using System;
 using System.IO;
-using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
 using Antlr4.Runtime;
 using System.Linq;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
-public class StlAsciiReader : StlReader
+namespace ScaffoldingGenerator.IO
 {
-    public override Polygon3[] Read(string filePath)
+    public class StlAsciiReader : StlReader
     {
-        string fileContents = File.ReadAllText(filePath);
-        AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
-        StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        StlAsciiParser parser = new StlAsciiParser(tokenStream);
-        SolidVisitor visitor = new SolidVisitor();
-        Polygon3[] facets = visitor.Visit(parser.solid());
-        if (parser.NumberOfSyntaxErrors != 0)
+        public override Polygon3[] Read(string filePath)
         {
-            throw new Exception("Corrupt file");
+            string fileContents = File.ReadAllText(filePath);
+            AntlrInputStream inputStream = new AntlrInputStream(fileContents.ToLower());
+            StlAsciiLexer lexer = new StlAsciiLexer(inputStream);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            StlAsciiParser parser = new StlAsciiParser(tokenStream);
+            SolidVisitor visitor = new SolidVisitor();
+            Polygon3[] facets = visitor.Visit(parser.solid());
+            if (parser.NumberOfSyntaxErrors != 0)
+            {
+                throw new Exception("Corrupt file");
+            }
+            return facets;
         }
-        return facets;
-    }
 
-    private class SolidVisitor : StlAsciiBaseVisitor<Polygon3[]>
-    {
-        public override Polygon3[] VisitSolid(StlAsciiParser.SolidContext context)
+        private class SolidVisitor : StlAsciiBaseVisitor<Polygon3[]>
         {
-            FacetVisitor facetVisitor = new FacetVisitor();
-            return context.facet().Select((x) => facetVisitor.VisitFacet(x)).ToArray();
+            public override Polygon3[] VisitSolid(StlAsciiParser.SolidContext context)
+            {
+                FacetVisitor facetVisitor = new FacetVisitor();
+                return context.facet().Select((x) => facetVisitor.VisitFacet(x)).ToArray();
+            }
         }
-    }
 
-    private class FacetVisitor : StlAsciiBaseVisitor<Polygon3>
-    {
-        public override Polygon3 VisitFacet(StlAsciiParser.FacetContext context)
+        private class FacetVisitor : StlAsciiBaseVisitor<Polygon3>
         {
-            NormalVisitor normalVisitor = new NormalVisitor();
-            LoopVisitor loopVisitor = new LoopVisitor();
-            return new Polygon3(normalVisitor.VisitNormal(context.normal()), loopVisitor.VisitLoop(context.loop()));
+            public override Polygon3 VisitFacet(StlAsciiParser.FacetContext context)
+            {
+                NormalVisitor normalVisitor = new NormalVisitor();
+                LoopVisitor loopVisitor = new LoopVisitor();
+                return new Polygon3(normalVisitor.VisitNormal(context.normal()), loopVisitor.VisitLoop(context.loop()));
+            }
         }
-    }
 
-    private class NormalVisitor : StlAsciiBaseVisitor<Vector3>
-    {
-        public override Vector3 VisitNormal(StlAsciiParser.NormalContext context)
+        private class NormalVisitor : StlAsciiBaseVisitor<Vector3>
         {
-            IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
-            IEnumerator<float> enumerator = parsed.GetEnumerator();
-            enumerator.MoveNext();
-            float x = enumerator.Current;
-            enumerator.MoveNext();
-            float y = enumerator.Current;
-            enumerator.MoveNext();
-            float z = enumerator.Current;
-            return new Vector3(x, y, z);
+            public override Vector3 VisitNormal(StlAsciiParser.NormalContext context)
+            {
+                IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
+                IEnumerator<float> enumerator = parsed.GetEnumerator();
+                enumerator.MoveNext();
+                float x = enumerator.Current;
+                enumerator.MoveNext();
+                float y = enumerator.Current;
+                enumerator.MoveNext();
+                float z = enumerator.Current;
+                return new Vector3(x, y, z);
+            }
         }
-    }
 
-    private class LoopVisitor : StlAsciiBaseVisitor<Point3[]>
-    {
-        public override Point3[] VisitLoop(StlAsciiParser.LoopContext context)
+        private class LoopVisitor : StlAsciiBaseVisitor<Point3[]>
         {
-            VertexVisitor vertexVisitor = new VertexVisitor();
-            return context.vertex().Select((x) => vertexVisitor.VisitVertex(x)).ToArray();
+            public override Point3[] VisitLoop(StlAsciiParser.LoopContext context)
+            {
+                VertexVisitor vertexVisitor = new VertexVisitor();
+                return context.vertex().Select((x) => vertexVisitor.VisitVertex(x)).ToArray();
+            }
         }
-    }
 
-    private class VertexVisitor : StlAsciiBaseVisitor<Point3>
-    {
-        public override Point3 VisitVertex(StlAsciiParser.VertexContext context)
+        private class VertexVisitor : StlAsciiBaseVisitor<Point3>
         {
-            IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
-            IEnumerator<float> enumerator = parsed.GetEnumerator();
-            enumerator.MoveNext();
-            float x = enumerator.Current;
-            enumerator.MoveNext();
-            float y = enumerator.Current;
-            enumerator.MoveNext();
-            float z = enumerator.Current;
-            return new Point3(x, y, z);
+            public override Point3 VisitVertex(StlAsciiParser.VertexContext context)
+            {
+                IEnumerable<float> parsed = context.FLOAT().Select((x) => float.Parse(x.GetText()));
+                IEnumerator<float> enumerator = parsed.GetEnumerator();
+                enumerator.MoveNext();
+                float x = enumerator.Current;
+                enumerator.MoveNext();
+                float y = enumerator.Current;
+                enumerator.MoveNext();
+                float z = enumerator.Current;
+                return new Point3(x, y, z);
+            }
         }
     }
 }
