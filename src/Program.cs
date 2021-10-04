@@ -94,6 +94,9 @@ namespace ScaffoldingGenerator
                         scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, opts.SupportSpacing, opts.PlateSpacing));
                     }
                 }
+                if (opts.DoContourScaffolding) {
+                    scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, opts.PlateSpacing, edgeFacetIndex));
+                }
                 StlBinaryWriter writer = new StlBinaryWriter();
                 writer.Write("out.stl", scaffoldingFacets.ToArray());
             }
@@ -271,7 +274,7 @@ namespace ScaffoldingGenerator
                 foreach (Plane3 plane in planes) {
                     List<Point3> intersectionPoints = GetLineScaffoldingIntersections(region, plane);
                     if (intersectionPoints.Count >= 2) {
-                        scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, supportNormal, plateSpacing, model));
+                        scaffolding.AddRange(CreateTesselatedLineSupport(intersectionPoints, plateSpacing, model));
                     }
                 }
             }
@@ -317,7 +320,7 @@ namespace ScaffoldingGenerator
             return uniqueIntersections;
         }
 
-        private static IEnumerable<Polygon3> CreateTesselatedLineSupport(List<Point3> intersectionPoints, Vector3 supportNormal, double plateSpacing, Mesh3 model)
+        private static IEnumerable<Polygon3> CreateTesselatedLineSupport(List<Point3> intersectionPoints, double plateSpacing, Mesh3 model)
         {
             intersectionPoints.Sort(new Point3XComparer());
             double xyLength = intersectionPoints[0].DistanceTo(intersectionPoints[intersectionPoints.Count - 1]);
@@ -370,6 +373,22 @@ namespace ScaffoldingGenerator
             Vector3 normal = Vector3.Cross(AB, AC);
             //Console.WriteLine("Tesselated a facet");
             return new Polygon3(normal, new Point3[]{v1, v2, v3});
+        }
+
+        private static List<Polygon3> GenerateContourScaffolding(List<Mesh3> regions, float plateSpacing, Point3Tree<List<Polygon3>> edgeFacetIndex)
+        {
+            List<Polygon3> scaffolding = new List<Polygon3>();
+            foreach(Mesh3 region in regions) {
+                foreach (Polygon3 facet in region.Facets) {
+                    for (int i = 0; i != facet.EdgeMidPoints.Length; i++) {
+                        if (edgeFacetIndex[facet.EdgeMidPoints[i]].Count == 1) {
+                            LineSegment3 boundingEdge = facet.Edges[i];
+                            scaffolding.AddRange(CreateTesselatedLineSupport(new List<Point3>{boundingEdge.StartPoint, boundingEdge.EndPoint}, plateSpacing, region));
+                        }
+                    }
+                }
+            }
+            return scaffolding;
         }
     }
 }
