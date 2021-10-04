@@ -61,7 +61,7 @@ namespace ScaffoldingGenerator
             // Consider places where we can avoid a conversion of .ToArray/.ToList and rely on the IEnumerable interface
             try
             {
-                Mesh3 model = new Mesh3(ReadFacetsFromFile(opts.StlFilePath, opts.IsStlAscii));
+                Mesh3 model = new Mesh3(ReadFacetsFromFile(opts.StlInputPath, opts.IsStlAscii));
                 Console.WriteLine("Read " + model.Facets.Length + " facets from file");
 
                 Polygon3[] unsupportedFacets = model.Facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
@@ -98,7 +98,7 @@ namespace ScaffoldingGenerator
                     scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, (float)opts.PlateSpacing, edgeFacetIndex));
                 }
                 StlBinaryWriter writer = new StlBinaryWriter();
-                writer.Write("out.stl", scaffoldingFacets.ToArray());
+                writer.Write(opts.StlOutputPath, scaffoldingFacets.ToArray());
             }
             catch (Exception ex)
             {
