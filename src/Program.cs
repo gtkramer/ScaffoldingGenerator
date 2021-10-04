@@ -91,11 +91,11 @@ namespace ScaffoldingGenerator
                     }
                     Console.WriteLine("Made support normals");
                     foreach (Vector3 supportNormal in supportNormals) {
-                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, opts.SupportSpacing, opts.PlateSpacing));
+                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)opts.SupportSpacing, (float)opts.PlateSpacing));
                     }
                 }
                 if (opts.DoContourScaffolding) {
-                    scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, opts.PlateSpacing, edgeFacetIndex));
+                    scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, (float)opts.PlateSpacing, edgeFacetIndex));
                 }
                 StlBinaryWriter writer = new StlBinaryWriter();
                 writer.Write("out.stl", scaffoldingFacets.ToArray());
