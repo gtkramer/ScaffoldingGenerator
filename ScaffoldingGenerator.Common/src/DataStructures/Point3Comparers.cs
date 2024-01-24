@@ -5,8 +5,8 @@ namespace ScaffoldingGenerator.DataStructures
 {
     public abstract class Point3Comparer : IComparer<Point3> {
         public int Compare(Point3? a, Point3? b) {
-            bool aIsNull = object.ReferenceEquals(a, null);
-            bool bIsNull = object.ReferenceEquals(b, null);
+            bool aIsNull = a is null;
+            bool bIsNull = b is null;
             if (aIsNull && !bIsNull) {
                 return -1;
             }

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScaffoldingGenerator.CLI", "ScaffoldingGenerator.CLI\ScaffoldingGenerator.CLI.csproj", "{9677EA18-8553-4CC6-A5E9-81C7C3629E1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScaffoldingGenerator.GUI", "ScaffoldingGenerator.GUI\ScaffoldingGenerator.GUI.csproj", "{FEEDCBEF-BA06-4998-BE16-2182CE55B2BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScaffoldingGenerator.Common", "ScaffoldingGenerator.Common\ScaffoldingGenerator.Common.csproj", "{184BACA2-E15D-4923-B969-AA0BEFEDC672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9677EA18-8553-4CC6-A5E9-81C7C3629E1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9677EA18-8553-4CC6-A5E9-81C7C3629E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9677EA18-8553-4CC6-A5E9-81C7C3629E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9677EA18-8553-4CC6-A5E9-81C7C3629E1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEEDCBEF-BA06-4998-BE16-2182CE55B2BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEEDCBEF-BA06-4998-BE16-2182CE55B2BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEEDCBEF-BA06-4998-BE16-2182CE55B2BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEEDCBEF-BA06-4998-BE16-2182CE55B2BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{184BACA2-E15D-4923-B969-AA0BEFEDC672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184BACA2-E15D-4923-B969-AA0BEFEDC672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184BACA2-E15D-4923-B969-AA0BEFEDC672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184BACA2-E15D-4923-B969-AA0BEFEDC672}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

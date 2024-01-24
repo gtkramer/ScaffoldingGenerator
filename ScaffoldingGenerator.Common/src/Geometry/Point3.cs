@@ -10,9 +10,9 @@ namespace ScaffoldingGenerator.Geometry {
         public float Z { get; }
 
         public Point3(float x, float y, float z) {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public static Point3 operator +(Point3 point, Vector3 vector) {
@@ -49,15 +49,15 @@ namespace ScaffoldingGenerator.Geometry {
 
         public bool Equals(Point3? point)
         {
-            return !object.ReferenceEquals(point, null) && this.X == point.X && this.Y == point.Y && this.Z == point.Z;
+            return !object.ReferenceEquals(point, null) && X == point.X && Y == point.Y && Z == point.Z;
         }
 
         public override bool Equals(object? obj) {
-            return !object.ReferenceEquals(obj, null) && obj is Point3 point && this.Equals(point);
+            return !object.ReferenceEquals(obj, null) && obj is Point3 point && Equals(point);
         }
 
         public override int GetHashCode() {
-            return HashCode.Combine(this.X, this.Y, this.Z);
+            return HashCode.Combine(X, Y, Z);
         }
 
         public bool Equals(Point3? p1, Point3? p2)
@@ -72,7 +72,7 @@ namespace ScaffoldingGenerator.Geometry {
 
         public override string ToString()
         {
-            return $"({this.X}, {this.Y}, {this.Z})";
+            return $"({X}, {Y}, {Z})";
         }
     }
 }

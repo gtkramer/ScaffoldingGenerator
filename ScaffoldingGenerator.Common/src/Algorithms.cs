@@ -1,16 +1,13 @@
-using System;
-using CommandLine;
-using ScaffoldingGenerator.IO;
 using ScaffoldingGenerator.Geometry;
-using System.Collections.Generic;
-using System.Linq;
 using ScaffoldingGenerator.DataStructures;
 using OpenTK.Mathematics;
+using ScaffoldingGenerator.IO;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
-namespace ScaffoldingGenerator
-{
-    public class Program
-    {
+namespace ScaffoldingGenerator {
+    public class Algorithms {
         // Pointing in Z direction
         private static Vector3 XYNormal = new Vector3(0, 0, 1);
         // Pointing in Y direction
@@ -18,70 +15,45 @@ namespace ScaffoldingGenerator
         // Pointing in X direction
         private static Vector3 YZNormal = new Vector3(1, 0, 0);
 
-        private static Point3Comparer Point3DComparer = new Point3XComparer();
-
-        public static void Main(string[] args)
+        public static List<Polygon3> GenerateScaffolding(Mesh3 model, double criticalAngle, double dimensionLength, double toleranceAngle, double scaffoldingAngle, double supportSpacing, double plateSpacing, bool doXScaffolding, bool doYScaffolding, bool doContourScaffolding)
         {
-            Parser.Default.ParseArguments<Options>(args)
-            .WithParsed<Options>(RunOptions);
-            //.WithNotParsed<Options>(HandleParseError);
+            Polygon3[] unsupportedFacets = model.Facets.Where(facet => DoesFacetNeedSupported(facet, criticalAngle)).ToArray();
+            Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
+
+            Point3Tree<List<Polygon3>> edgeFacetIndex = new Point3Tree<List<Polygon3>>(GetEdgeFacetKeys(unsupportedFacets));
+            Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
+
+            CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
+            Console.WriteLine("Association created between facets and edges");
+
+            List<Mesh3> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
+            Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
+
+            List<Mesh3> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, dimensionLength, toleranceAngle)).ToList();
+            Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
+
+            List<Polygon3> scaffoldingFacets = new List<Polygon3>();
+            if (doXScaffolding || doYScaffolding) {
+                List<Vector3> supportNormals = new List<Vector3>();
+                Quaternion rotation = new Quaternion(0, 0, (float)AngleConverter.DegToRad(scaffoldingAngle));
+                if (doXScaffolding) {
+                    supportNormals.Add(Vector3.Transform(YZNormal, rotation));
+                }
+                if (doYScaffolding) {
+                    supportNormals.Add(Vector3.Transform(XZNormal, rotation));
+                }
+                Console.WriteLine("Made support normals");
+                foreach (Vector3 supportNormal in supportNormals) {
+                    scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)supportSpacing, (float)plateSpacing));
+                }
+            }
+            if (doContourScaffolding) {
+                scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, (float)plateSpacing, edgeFacetIndex));
+            }
+            return scaffoldingFacets;
         }
 
-        private static void RunOptions(Options opts)
-        {
-            // TODO: Make sure the best versions of these generic collections are being used in the right places.
-            // Use arrays when size is known and is not expected to change
-            // Otherwise, use a list
-            // Consider places where we can avoid a conversion of .ToArray/.ToList and rely on the IEnumerable interface
-            try
-            {
-                Mesh3 model = new Mesh3(ReadFacetsFromFile(opts.StlInputPath, opts.IsStlAscii));
-                Console.WriteLine("Read " + model.Facets.Length + " facets from file");
-
-                Polygon3[] unsupportedFacets = model.Facets.Where(facet => DoesFacetNeedSupported(facet, opts.CriticalAngle)).ToArray();
-                Console.WriteLine("Identified " + unsupportedFacets.Length + " unsupported facets");
-
-                Point3Tree<List<Polygon3>> edgeFacetIndex = new Point3Tree<List<Polygon3>>(GetEdgeFacetKeys(unsupportedFacets));
-                Console.WriteLine("Created an index with " + edgeFacetIndex.Keys.Length + " edges");
-
-                CreateEdgeFacetAssociation(unsupportedFacets, edgeFacetIndex);
-                Console.WriteLine("Association created between facets and edges");
-
-                List<Mesh3> unsupportedRegions = BuildUnsupportedRegions(unsupportedFacets, edgeFacetIndex);
-                Console.WriteLine("Built " + unsupportedRegions.Count + " unsupported regions");
-
-                List<Mesh3> largeRegions = unsupportedRegions.Where(region => IsLargeRegion(region, edgeFacetIndex, opts.DimensionLength, opts.ToleranceAngle)).ToList();
-                Console.WriteLine("Removed " + (unsupportedRegions.Count - largeRegions.Count) + " small unsupported regions");
-
-                List<Polygon3> scaffoldingFacets = new List<Polygon3>();
-                if (opts.DoXScaffolding || opts.DoYScaffolding) {
-                    List<Vector3> supportNormals = new List<Vector3>();
-                    Quaternion rotation = new Quaternion(0, 0, (float)AngleConverter.DegToRad(opts.ScaffoldingAngle));
-                    if (opts.DoXScaffolding) {
-                        supportNormals.Add(Vector3.Transform(YZNormal, rotation));
-                    }
-                    if (opts.DoYScaffolding) {
-                        supportNormals.Add(Vector3.Transform(XZNormal, rotation));
-                    }
-                    Console.WriteLine("Made support normals");
-                    foreach (Vector3 supportNormal in supportNormals) {
-                        scaffoldingFacets.AddRange(GenerateLineScaffolding(model, largeRegions, supportNormal, (float)opts.SupportSpacing, (float)opts.PlateSpacing));
-                    }
-                }
-                if (opts.DoContourScaffolding) {
-                    scaffoldingFacets.AddRange(GenerateContourScaffolding(largeRegions, (float)opts.PlateSpacing, edgeFacetIndex));
-                }
-                StlBinaryWriter writer = new StlBinaryWriter();
-                writer.Write(opts.StlOutputPath, scaffoldingFacets.ToArray());
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex);
-                Environment.Exit(1);
-            }
-        }
-
-        private static Polygon3[] ReadFacetsFromFile(string stlFilePath, bool isStlAscii)
+        public static Polygon3[] ReadFacetsFromFile(string stlFilePath, bool isStlAscii)
         {
             StlReader reader;
             if (isStlAscii)
@@ -93,6 +65,11 @@ namespace ScaffoldingGenerator
                 reader = new StlBinaryReader();
             }
             return reader.Read(stlFilePath);
+        }
+
+        public static void WriteFacetsToFile(Polygon3[] facets, string stlFilePath) {
+            StlBinaryWriter writer = new();
+            writer.Write(stlFilePath, facets);
         }
 
         private static bool DoesFacetNeedSupported(Polygon3 facet, double criticalAngle)

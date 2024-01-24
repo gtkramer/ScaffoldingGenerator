@@ -9,8 +9,7 @@ production environment.
 
 The C# program is a rewrite of an existing Java program.  Doing a rewrite more
 easily allows the program to take advantage of modern technologies and to
-improve upon the clarity of the original implementation, both of which are near
-and dear to my heart.  It also helps that I love programming in C# :)
+improve upon the clarity of the original implementation.
 
 This project aims to incorporate the following technologies, data structures,
 tool chains, idea, or specifications:
@@ -19,5 +18,5 @@ tool chains, idea, or specifications:
 * KD tree, for indexing edges on triangles
 * OpenGL, for rendering objects
 * ANTLR, for writing grammars that parse STL files
-* Glade/GtkSharp, for a user interface definition separated from logic
+* Avalonia, for a user interface definition separated from logic
 * Parallelize work whenever possible, for making things faster

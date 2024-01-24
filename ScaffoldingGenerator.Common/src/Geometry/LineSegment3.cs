@@ -7,12 +7,12 @@ namespace ScaffoldingGenerator.Geometry {
         public Point3 EndPoint { get; }
 
         public LineSegment3(Point3 startPoint, Point3 endPoint) {
-            this.StartPoint = startPoint;
-            this.EndPoint = endPoint;
+            StartPoint = startPoint;
+            EndPoint = endPoint;
         }
 
         public Vector3 ToVector3() {
-            return this.EndPoint - this.StartPoint;
+            return EndPoint - StartPoint;
         }
     }
 }

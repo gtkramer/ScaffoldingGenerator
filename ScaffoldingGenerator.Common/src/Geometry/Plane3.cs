@@ -9,8 +9,8 @@ namespace ScaffoldingGenerator.Geometry
 
         public Plane3(Vector3 normal, Point3 point)
         {
-            this.Normal = normal;
-            this.Point = point;
+            Normal = normal;
+            Point = point;
         }
 
         public Point3? GetIntersectionPoint(LineSegment3 segment)
@@ -28,7 +28,7 @@ namespace ScaffoldingGenerator.Geometry
 
         private float GetParameter(Point3 v, Vector3 m)
         {
-            return Vector3.Dot(this.Normal, this.Point - v) / Vector3.Dot(this.Normal, m);
+            return Vector3.Dot(Normal, Point - v) / Vector3.Dot(Normal, m);
         }
     }
 }
