@@ -4,3 +4,4 @@ obj
 *.interp
 .antlr
 *.glade~
+.vscode
