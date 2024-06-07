@@ -2,47 +2,51 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gui="clr-namespace:ScaffoldingGenerator.GUI;assembly=ScaffoldingGenerator.GUI"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ScaffoldingGenerator.GUI.MainWindow"
         Title="ScaffoldingGenerator.GUI">
-<StackPanel Width="256" Spacing="10">
-        <StackPanel>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Open Part</Button>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Close Part</Button>
+    <Grid ColumnDefinitions="*, 256" RowDefinitions="*, Auto">
+        <gui:SilkNetExample Grid.Column="0" />
+        <StackPanel Grid.Column="1" Spacing="10">
+            <StackPanel>
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Open Model</Button>
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Close Model</Button>
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Support critical angle:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Support dimension length:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Perpendicular tolerance angle:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Line support angle:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Spacing between line supports:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Spacing above build plate:" />
+                <TextBox />
+            </StackPanel>
+            <StackPanel Spacing="2">
+                <TextBlock Text="Scaffolding types:" />
+                <CheckBox>X scaffolding</CheckBox>
+                <CheckBox>Y scaffolding</CheckBox>
+                <CheckBox>Contour scaffolding</CheckBox>
+            </StackPanel>
+            <StackPanel>
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Generate Scaffolding</Button>
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Export Scaffolding</Button>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Support critical angle:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Support dimension length:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Perpendicular tolerance angle:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Line support angle:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Spacing between line supports:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Spacing above build plate:" />
-            <TextBox />
-        </StackPanel>
-        <StackPanel Spacing="2">
-            <TextBlock Text="Scaffolding types:" />
-            <CheckBox>X scaffolding</CheckBox>
-            <CheckBox>Y scaffolding</CheckBox>
-            <CheckBox>Contour scaffolding</CheckBox>
-        </StackPanel>
-        <StackPanel>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Generate Scaffolding</Button>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Export Scaffolding</Button>
-        </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
