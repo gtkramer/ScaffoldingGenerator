@@ -8,11 +8,9 @@
         Title="ScaffoldingGenerator.GUI">
     <Grid ColumnDefinitions="*, 256" RowDefinitions="*, Auto">
         <gui:SilkNetExample Grid.Column="0" />
-        <StackPanel Grid.Column="1" Spacing="10">
-            <StackPanel>
-                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Open Model</Button>
-                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Close Model</Button>
-            </StackPanel>
+        <StackPanel Grid.Column="1" Spacing="10" Margin="10">
+            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Open Model</Button>
+            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Close Model</Button>
             <StackPanel Spacing="2">
                 <TextBlock Text="Support critical angle:" />
                 <TextBox />
@@ -43,10 +41,8 @@
                 <CheckBox>Y scaffolding</CheckBox>
                 <CheckBox>Contour scaffolding</CheckBox>
             </StackPanel>
-            <StackPanel>
-                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Generate Scaffolding</Button>
-                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Export Scaffolding</Button>
-            </StackPanel>
+            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Generate Scaffolding</Button>
+            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Export Scaffolding</Button>
         </StackPanel>
     </Grid>
 </Window>
